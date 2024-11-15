@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Zenject.SpaceFighter;
 
@@ -10,19 +11,82 @@ public class MainCameraController : MonoBehaviour
     [SerializeField] private Transform _target;
     [SerializeField] private LayerMask _obstacleMask;
 
-    private Transform[] _obstacles;
-    private int _oldHitsNumber = 0;
+    private List<MeshRenderer> _obstacles = new List<MeshRenderer>();
 
     private void Start()
     {
         StartCoroutine(Following(_target));
     }
 
-    private void LateUpdate()
+    private void FixedUpdate()
     {
-        // XRay();
+        if (CheckWalls(out RaycastHit[] hits))
+        {
+            XRay(hits);
+        }
+        else if (_obstacles.Count != 0)
+        {
+            ClearObstacles();
+        }
     }
 
+    private void ClearObstacles()
+    {
+        foreach (var obstacle in _obstacles)
+        {
+            print(obstacle.name);
+            SetAlpha(obstacle, 1);
+        }
+
+        _obstacles.Clear();
+    }
+
+    private void XRay(RaycastHit[] hits)
+    {
+        List<MeshRenderer> temp = new List<MeshRenderer>();
+
+        foreach (var hit in hits)
+        {
+            if (hit.collider.TryGetComponent(out MeshRenderer renderer))
+            {
+                temp.Add(renderer);
+                SetAlpha(renderer, 0.2f);
+            }
+        }
+
+        var oldObstacles = _obstacles.Where(i => temp.Contains(i) == false);
+
+        foreach (var obstacle in oldObstacles)
+        {
+            SetAlpha(obstacle, 1);
+        }
+
+        _obstacles = temp;
+    }
+
+    private static void SetAlpha(MeshRenderer renderer, float alpha)
+    {
+        Color currentColor = renderer.material.color;
+        renderer.material.color = new Color(currentColor.r, currentColor.g, currentColor.b, alpha);
+    }
+
+    private bool CheckWalls(out RaycastHit[] hits)
+    {
+        float characterDistance = Vector3.Distance(transform.position, _target.position);
+        Vector3 direction = _target.position - transform.position;
+        hits = Physics.RaycastAll(transform.position, direction, characterDistance, _obstacleMask);
+        // hits = Physics.BoxCastAll(transform.position, Vector3.back * 3, direction, Quaternion.Euler(0, 0, 0), characterDistance);
+
+        return hits.Length > 0;
+    }
+
+
+    /// <summary>
+    /// XRAY old
+    /// </summary>
+    /// <param name="target"></param>
+    /// <returns></returns>
+    /*
     private void XRay()
     {
         float characterDistance = Vector3.Distance(transform.position, _target.position);
@@ -34,7 +98,6 @@ public class MainCameraController : MonoBehaviour
 
             if (_obstacles != null && _obstacles.Length > 0 && newHits < 0)
             {
-                // Repaint all the previous obstructions. Because some of the stuff might be not blocking anymore
                 for (int i = 0; i < _obstacles.Length; i++)
                 {
                     MeshRenderer renderer = _obstacles[i].gameObject.GetComponent<MeshRenderer>();
@@ -45,7 +108,6 @@ public class MainCameraController : MonoBehaviour
 
             _obstacles = new Transform[hits.Length];
 
-            // Hide the current obstructions 
             for (int i = 0; i < hits.Length; i++)
             {
                 Transform obstacle = hits[i].transform;
@@ -59,7 +121,7 @@ public class MainCameraController : MonoBehaviour
             _oldHitsNumber = hits.Length;
         }
         else
-        {   // Mean that no more stuff is blocking the view and sometimes all the stuff is not blocking as the same time
+        {
             if (_obstacles != null && _obstacles.Length > 0)
             {
                 for (int i = 0; i < _obstacles.Length; i++)
@@ -74,6 +136,7 @@ public class MainCameraController : MonoBehaviour
             }
         }
     }
+    */
 
     private IEnumerator Following(Transform target)
     {
