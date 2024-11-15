@@ -10,7 +10,7 @@ public class BerserkCombat : MonoBehaviour
 
     private Collider _swordCollider;
 
-    public int AttacksCount { get; private set; } = 4;
+    public int AttacksCount { get; private set; } = 5;
 
     private void Awake()
     {

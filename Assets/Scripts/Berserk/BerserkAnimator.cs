@@ -6,6 +6,7 @@ using System;
 public class BerserkAnimator : MonoBehaviour
 {
     private const string AttackIndex = nameof(AttackIndex);
+    private const string IsRunning = nameof(IsRunning);
     private const int BaseAttackIndex = -1;
 
     [SerializeField] private Animator _animator;
@@ -18,5 +19,10 @@ public class BerserkAnimator : MonoBehaviour
     public void ResetAttackIndex()
     {
         _animator.SetInteger(AttackIndex, BaseAttackIndex);
+    }
+
+    public void SetRunningState(bool state)
+    {
+        _animator.SetBool(IsRunning, state);
     }
 }
