@@ -34,7 +34,6 @@ public class MainCameraController : MonoBehaviour
     {
         foreach (var obstacle in _obstacles)
         {
-            print(obstacle.name);
             SetAlpha(obstacle, 1);
         }
 

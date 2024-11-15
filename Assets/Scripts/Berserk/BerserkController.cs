@@ -7,19 +7,30 @@ public class BerserkController : MonoBehaviour, IHealth
     [SerializeField] private BerserkCombat _combat;
     [SerializeField] private BerserkMover _mover;
 
-    [field:SerializeField] public float MaxHealth { get; private set; }
+    private PlayerInput _input;
+
+    public float MaxHealth { get; private set; } = 10;
     public float CurrentHealth { get; private set; }
 
-    private void Start()
+    [Inject]
+    public void Construct(PlayerInput input)
     {
+        _input = input;
+        _input.Enable();
+
         CurrentHealth = MaxHealth;
     }
 
     private void Update()
     {
         Vector3 inputVector = GetInputAxis();
-
         _mover.Move(inputVector);
+
+        if (_input.Combat.Attack.inProgress)
+        {
+            int randomAttackIndex = Random.Range(0, _combat.AttacksCount + 1);
+            _animator.SetAttackIndex(randomAttackIndex);
+        }
     }
 
     public void ApplyDamage(float amount)
