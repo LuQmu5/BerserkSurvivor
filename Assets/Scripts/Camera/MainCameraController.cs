@@ -20,7 +20,7 @@ public class MainCameraController : MonoBehaviour
 
     private void LateUpdate()
     {
-        XRay();
+        // XRay();
     }
 
     private void XRay()
@@ -37,8 +37,6 @@ public class MainCameraController : MonoBehaviour
                 // Repaint all the previous obstructions. Because some of the stuff might be not blocking anymore
                 for (int i = 0; i < _obstacles.Length; i++)
                 {
-                    // _obstacles[i].gameObject.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
-
                     MeshRenderer renderer = _obstacles[i].gameObject.GetComponent<MeshRenderer>();
                     Color currentColor = renderer.material.color;
                     renderer.material.color = new Color(currentColor.r, currentColor.g, currentColor.b, 1);
@@ -51,9 +49,6 @@ public class MainCameraController : MonoBehaviour
             for (int i = 0; i < hits.Length; i++)
             {
                 Transform obstacle = hits[i].transform;
-
-                // obstacle.gameObject.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
-
                 MeshRenderer renderer = obstacle.gameObject.GetComponent<MeshRenderer>();
                 Color currentColor = renderer.material.color;
                 renderer.material.color = new Color(currentColor.r, currentColor.g, currentColor.b, 0.2f);
@@ -69,8 +64,6 @@ public class MainCameraController : MonoBehaviour
             {
                 for (int i = 0; i < _obstacles.Length; i++)
                 {
-                    // _obstacles[i].gameObject.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
-
                     MeshRenderer renderer = _obstacles[i].gameObject.GetComponent<MeshRenderer>();
                     Color currentColor = renderer.material.color;
                     renderer.material.color = new Color(currentColor.r, currentColor.g, currentColor.b, 1);
