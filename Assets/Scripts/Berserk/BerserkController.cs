@@ -18,7 +18,6 @@ public class BerserkController : MonoBehaviour, IHealth
     private void Update()
     {
         Vector3 inputVector = GetInputAxis();
-        print(inputVector);
 
         _mover.Move(inputVector);
     }
