@@ -24,12 +24,12 @@ public class BerserkController : MonoBehaviour, IHealth
     private void Update()
     {
         Vector3 inputVector = GetInputAxis();
-        _mover.Move(inputVector);
+        _mover.Move(inputVector, _animator.AttackInProgress);
         _animator.SetRunningState(inputVector.sqrMagnitude > 0);
 
-        if (_input.Combat.Attack.inProgress)
+        if (_input.Combat.Attack.triggered)
         {
-            int randomAttackIndex = Random.Range(0, _combat.AttacksCount);
+            int randomAttackIndex = _combat.GetRandomAttackIndex();
             _animator.SetAttackIndex(randomAttackIndex);
         }
     }
