@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using Zenject;
 
 public class BerserkController : MonoBehaviour, IHealth
@@ -23,9 +24,16 @@ public class BerserkController : MonoBehaviour, IHealth
 
     private void Update()
     {
-        if (_animator.AttackInProgress == false)
+        Vector3 inputVector = Camera.main.transform.TransformDirection(GetInputAxis());
+        Move(inputVector); 
+        
+        if (_animator.AttackInProgress)
         {
-            Move();       
+            _mover.RotateToMouse();
+        }
+        else
+        {
+            _mover.RotateToPoint(inputVector);
         }
 
         if (_input.Combat.Attack.triggered)
@@ -49,14 +57,12 @@ public class BerserkController : MonoBehaviour, IHealth
     {
         int randomAttackIndex = _combat.GetRandomAttackIndex();
 
-        _mover.RotateToClick();
         _animator.SetAttackIndex(randomAttackIndex);
     }
 
-    private void Move()
+    private void Move(Vector3 inputVector)
     {
-        Vector3 inputVector = GetInputAxis();
-        _mover.Move(inputVector);
+        _mover.Move(inputVector, _animator.AttackInProgress);
         _animator.SetRunningState(inputVector.sqrMagnitude > 0);
     }
 

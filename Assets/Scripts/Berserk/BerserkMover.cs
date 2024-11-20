@@ -7,29 +7,30 @@ using UnityEngine.EventSystems;
 public class BerserkMover : MonoBehaviour
 {
     [SerializeField] private CharacterController _controller;
-    [SerializeField] private float _speed = 5;
+    [SerializeField] private float _movementSpeed = 5;
+    [SerializeField] private float _rotationSpeed = 10;
 
-    public void Move(Vector3 inputVector)
+    public void Move(Vector3 inputVector, bool attackInProgress)
     {
-        Vector3 moveDirection = Vector3.zero;
+        float speedCoeff = attackInProgress ? 0.4f : 1;
 
-        if (inputVector.sqrMagnitude > 0.1f)
-        {
-            moveDirection = Camera.main.transform.TransformDirection(inputVector);
-            RotateToPoint(moveDirection);
-        }
+        if (inputVector.sqrMagnitude < 0.1f)
+            return;
 
-        _controller.Move(_speed * moveDirection * Time.deltaTime);
+        _controller.Move(_movementSpeed * speedCoeff * inputVector * Time.deltaTime);
     }
 
     public void RotateToPoint(Vector3 point)
     {
+        if (point == Vector3.zero)
+            return;
+
         point.y = 0;
         point.Normalize();
         transform.forward = point;
     }
 
-    public void RotateToClick()
+    public void RotateToMouse()
     {
         Plane playerPlane = new Plane(Vector3.up, transform.position);
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -38,7 +39,7 @@ public class BerserkMover : MonoBehaviour
         {
             Vector3 targetPoint = ray.GetPoint(hit);
             Quaternion targetRotation = Quaternion.LookRotation(targetPoint - transform.position);
-            transform.rotation = targetRotation;
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * _rotationSpeed);
         }
     }
 }
