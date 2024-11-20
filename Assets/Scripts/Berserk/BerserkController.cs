@@ -23,14 +23,14 @@ public class BerserkController : MonoBehaviour, IHealth
 
     private void Update()
     {
-        Vector3 inputVector = GetInputAxis();
-        _mover.Move(inputVector, _animator.AttackInProgress);
-        _animator.SetRunningState(inputVector.sqrMagnitude > 0);
+        if (_animator.AttackInProgress == false)
+        {
+            Move();       
+        }
 
         if (_input.Combat.Attack.triggered)
         {
-            int randomAttackIndex = _combat.GetRandomAttackIndex();
-            _animator.SetAttackIndex(randomAttackIndex);
+            Attack();
         }
     }
 
@@ -43,6 +43,21 @@ public class BerserkController : MonoBehaviour, IHealth
 
         if (CurrentHealth == 0)
             gameObject.SetActive(false);
+    }
+
+    private void Attack()
+    {
+        int randomAttackIndex = _combat.GetRandomAttackIndex();
+
+        _mover.RotateToClick();
+        _animator.SetAttackIndex(randomAttackIndex);
+    }
+
+    private void Move()
+    {
+        Vector3 inputVector = GetInputAxis();
+        _mover.Move(inputVector);
+        _animator.SetRunningState(inputVector.sqrMagnitude > 0);
     }
 
     private Vector3 GetInputAxis()
