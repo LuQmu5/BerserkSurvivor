@@ -7,6 +7,7 @@ public class Enemy : MonoBehaviour, IHealth
 {
     [SerializeField] private Transform _player;
     [SerializeField] private NavMeshAgent _agent;
+    [SerializeField] private BloodVFX _bloodVFX;
 
     public float MaxHealth { get; private set; } = 100;
     public float CurrentHealth { get; private set; }
@@ -25,6 +26,7 @@ public class Enemy : MonoBehaviour, IHealth
     {
         CurrentHealth -= amount;
         print(CurrentHealth);
+        Instantiate(_bloodVFX, transform.position, Quaternion.identity);
 
         if (CurrentHealth < 0)
             CurrentHealth = 0;
