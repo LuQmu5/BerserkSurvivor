@@ -26,7 +26,8 @@ public class Enemy : MonoBehaviour, IHealth
     {
         CurrentHealth -= amount;
         print(CurrentHealth);
-        Instantiate(_bloodVFX, transform.position, Quaternion.identity);
+
+        Instantiate(_bloodVFX, transform.RandomOffset(0.5f, 1, 0.5f), Quaternion.identity);
 
         if (CurrentHealth < 0)
             CurrentHealth = 0;
