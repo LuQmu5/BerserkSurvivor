@@ -103,8 +103,8 @@ MonoBehaviour:
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
-    m_PressedColor: {r: 1, g: 0, b: 0, a: 1}
-    m_SelectedColor: {r: 1, g: 0, b: 0, a: 1}
+    m_PressedColor: {r: 0.26666668, g: 0.09019608, b: 0.07450981, a: 1}
+    m_SelectedColor: {r: 0.26666668, g: 0.09019608, b: 0.07450981, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -136,7 +136,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2230d452eacf65e489ddfce3a905449d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _header: {fileID: 7775450699731434452}
   _icon: {fileID: 209057565435948642}
 --- !u!1 &2782487963403839745
 GameObject:
