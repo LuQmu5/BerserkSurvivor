@@ -9,18 +9,24 @@ public class BerserkCombat : MonoBehaviour
     [SerializeField] private Sword _sword;
 
     private Collider _swordCollider;
-    private int _attacksCount = 5;
+    private int _attackVariationsCount = 5;
 
     private void Awake()
     {
         _swordCollider = _sword.GetComponent<Collider>();
     }
 
+    /// <summary>
+    /// calling in animation event
+    /// </summary>
     public void EnableCollider()
     {
         _swordCollider.enabled = true;
     }
 
+    /// <summary>
+    /// calling in animation event
+    /// </summary>
     public void DisableCollider()
     {
         _swordCollider.enabled = false;
@@ -28,6 +34,6 @@ public class BerserkCombat : MonoBehaviour
 
     public int GetRandomAttackIndex()
     {
-        return Random.Range(0, _attacksCount);
+        return Random.Range(0, _attackVariationsCount);
     }
 }

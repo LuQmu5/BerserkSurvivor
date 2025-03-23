@@ -13,11 +13,12 @@ public class BerserkMover : MonoBehaviour
     public void Move(Vector3 inputVector, bool attackInProgress)
     {
         float speedCoeff = attackInProgress ? 0.4f : 1;
+        float deadZone = 0.1f;
 
-        if (inputVector.sqrMagnitude < 0.1f)
+        if (inputVector.sqrMagnitude < deadZone)
             return;
 
-        _controller.Move(_movementSpeed * speedCoeff * inputVector * Time.deltaTime);
+        _controller.Move(new Vector3(inputVector.x, 0, inputVector.y) * _movementSpeed * speedCoeff * Time.deltaTime);
     }
 
     public void RotateToPoint(Vector3 point)
