@@ -9,7 +9,7 @@
                     "name": "Attack",
                     "type": "Button",
                     "id": "5be70f92-1e52-4045-a7fb-57de7db51d36",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
