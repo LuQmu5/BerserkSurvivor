@@ -3,18 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Zenject.SpaceFighter;
+using static UnityEngine.GraphicsBuffer;
 
 public class MainCameraController : MonoBehaviour
 {
     [SerializeField] private Vector3 _baseOffset = new Vector3(0, 15, -8);
     [SerializeField] private Vector3 _baseEuler = new Vector3(60, 0, 0);
-    [SerializeField] private Transform _target;
     [SerializeField] private LayerMask _obstacleMask;
 
     private List<MeshRenderer> _obstacles = new List<MeshRenderer>();
+    private Transform _target;
 
-    private void Start()
+    public void Init(Transform target)
     {
+        _target = target;
         StartCoroutine(Following(_target));
     }
 

@@ -19,9 +19,10 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
     public float MaxHealth { get; private set; }
     public float CurrentHealth { get; private set; }
 
-    [Inject]
-    public void Construct(PlayerInput input, CharacterStats stats)
+    public void Init(PlayerInput input, CharacterStats stats)
     {
+        print("construct");
+
         _input = input;
         _input.Enable();
 
