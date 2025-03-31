@@ -7,6 +7,7 @@ public class CharacterMagicCombatSystem
     private Coroutine _attackCooldownRefreshingRoutine;
     private float _attackCooldown;
     private CharacterStats _characterStats;
+    private SpellCastingSystem _spellCastingSystem;
 
     public bool AttackEnabled => _attackCooldownRefreshingRoutine == null;
     public float AttackCooldown => _attackCooldown;
@@ -15,6 +16,7 @@ public class CharacterMagicCombatSystem
     {
         _coroutineRunner = coroutineRunner;
         _characterStats = characterStats;
+        _spellCastingSystem = new SpellCastingSystem(coroutineRunner);
     }
 
     public bool TryStartAttack()
@@ -25,6 +27,11 @@ public class CharacterMagicCombatSystem
         _attackCooldownRefreshingRoutine = _coroutineRunner.StartCoroutine(AttackCooldownRefreshing());
 
         return true;
+    }
+
+    private void TryCastSpell()
+    {
+
     }
 
     private IEnumerator AttackCooldownRefreshing()
