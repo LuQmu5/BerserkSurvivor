@@ -23,6 +23,7 @@ public class SpellCastingSystem
     private IReadOnlyDictionary<KeyCode, MagicElements> _spellKeys;
     private MagicElements[] _currentCombo;
     private SpellBook _spellBook;
+    private int _currentSpellIndex;
 
     public Spell CurrentActiveSpell => _spellBook.CurrentActiveSpell;
 
@@ -80,18 +81,10 @@ public class SpellCastingSystem
     private void CheckComboKeys()
     {
         if (Input.anyKeyDown)
-        {
             foreach (KeyCode key in Enum.GetValues(typeof(KeyCode)))
-            {
                 if (Input.GetKeyDown(key))
-                {
-                    Debug.Log(key);
-
                     if (_spellKeys.ContainsKey(key))
                         FillComboArray(_spellKeys[key]);
-                }
-            }
-        }
     }
 
     private void FillComboArray(MagicElements item)
@@ -105,7 +98,10 @@ public class SpellCastingSystem
             }
         }
 
-        _currentCombo[0] = item;
+        _currentCombo[_currentSpellIndex++] = item;
+
+        if (_currentSpellIndex >= _currentCombo.Length)
+            _currentSpellIndex = 0;
 
         Debug.Log($"" +
             $"1. {_currentCombo[0]}\n" +
