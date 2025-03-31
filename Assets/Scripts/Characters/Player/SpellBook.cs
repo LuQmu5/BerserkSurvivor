@@ -1,25 +1,35 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+
+public enum SpellNames
+{
+    Fireball,
+    Frostbolt
+}
 
 public class SpellBook
 {
     private const string SpellsPath = "StaticData/Spells";
 
     private List<Spell> _spells;
-
+    
     public Spell CurrentActiveSpell { get; private set; }
 
     public SpellBook()
     {
-        _spells = new List<Spell>();
-
         SpellData[] spellsData = Resources.LoadAll<SpellData>(SpellsPath);
 
-        foreach (SpellData data in spellsData)
+        SpellData fireball = spellsData.First(i => i.Name == SpellNames.Fireball);
+        SpellData frostbolt = spellsData.First(i => i.Name == SpellNames.Frostbolt);
+
+        _spells = new List<Spell>()
         {
-            Spell spell = new Spell(data);
-            _spells.Add(spell);
-        }
+            new FireballSpell(fireball),
+            new FrostboltSpell(frostbolt),
+        };
+
+        CurrentActiveSpell = _spells[0];
     }
 
     public bool TrySetActiveSpell(MagicElementsPattern pattern)

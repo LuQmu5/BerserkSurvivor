@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class Spell
+public abstract class Spell
 {
     public SpellData Data { get; private set; }
 
@@ -10,8 +10,29 @@ public class Spell
         Data = data;
     }
 
-    public void Use()
+    public abstract void Use();
+}
+
+public class FireballSpell : Spell
+{
+    public FireballSpell(SpellData data) : base(data)
     {
-        Debug.Log(Data.Name + " used!");
+    }
+
+    public override void Use()
+    {
+        Debug.Log(ToString() + "FIRE!");
+    }
+}
+
+public class FrostboltSpell : Spell
+{
+    public FrostboltSpell(SpellData data) : base(data)
+    {
+    }
+
+    public override void Use()
+    {
+        Debug.Log(ToString() + "ICE!");
     }
 }

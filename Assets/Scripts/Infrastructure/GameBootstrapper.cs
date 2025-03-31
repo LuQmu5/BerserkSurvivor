@@ -4,6 +4,8 @@ public class GameBootstrapper : MonoBehaviour
 {
     [SerializeField] private Transform _levelSpawnPoint;
     [SerializeField] private MainCameraController _mainCameraController;
+    [SerializeField] private SpellBookView _spellBookView;
+    [SerializeField] private SpellData _startSpell;
 
     private const string CharactersPath = "Characters";
 
@@ -14,7 +16,8 @@ public class GameBootstrapper : MonoBehaviour
         CharacterStats characterStats = new CharacterStats();
 
         CharacterBehaviour mage = Instantiate(characters[0], _levelSpawnPoint.position, Quaternion.identity);
-        mage.Init(input, characterStats);
+        mage.Init(input, characterStats, _spellBookView);
         _mainCameraController.Init(mage.transform);
+        _spellBookView.Init(_startSpell);
     }
 }

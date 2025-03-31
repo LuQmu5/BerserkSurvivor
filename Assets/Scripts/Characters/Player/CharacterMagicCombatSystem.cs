@@ -12,11 +12,11 @@ public class CharacterMagicCombatSystem
     public bool AttackEnabled => _attackCooldownRefreshingRoutine == null;
     public float AttackCooldown => _attackCooldown;
 
-    public CharacterMagicCombatSystem(ICoroutineRunner coroutineRunner, CharacterStats characterStats)
+    public CharacterMagicCombatSystem(ICoroutineRunner coroutineRunner, CharacterStats characterStats, SpellBookView spellBookView)
     {
         _coroutineRunner = coroutineRunner;
         _characterStats = characterStats;
-        _spellCastingSystem = new SpellCastingSystem(coroutineRunner);
+        _spellCastingSystem = new SpellCastingSystem(coroutineRunner, spellBookView);
     }
 
     public bool TryActivateSpell()

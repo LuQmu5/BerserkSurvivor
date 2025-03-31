@@ -19,7 +19,7 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
     public float MaxHealth { get; private set; }
     public float CurrentHealth { get; private set; }
 
-    public void Init(PlayerInput input, CharacterStats stats)
+    public void Init(PlayerInput input, CharacterStats stats, SpellBookView spellBookView)
     {
         print("construct");
 
@@ -29,7 +29,7 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
         _stats = stats;
 
         _view = new CharacterView(GetComponent<Animator>());
-        _combatSystem = new CharacterMagicCombatSystem(this, stats);
+        _combatSystem = new CharacterMagicCombatSystem(this, stats, spellBookView);
         _mover = new CharacterMover(GetComponent<CharacterController>(), 10, 10);
 
         MaxHealth = 10;

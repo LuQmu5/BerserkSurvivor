@@ -23,11 +23,12 @@ public class SpellCastingSystem
     private IReadOnlyDictionary<KeyCode, MagicElements> _spellKeys;
     private MagicElements[] _currentCombo;
     private SpellBook _spellBook;
+    private SpellBookView _spellBookView;
     private int _currentSpellIndex;
 
     public Spell CurrentActiveSpell => _spellBook.CurrentActiveSpell;
 
-    public SpellCastingSystem(ICoroutineRunner coroutineRunner)
+    public SpellCastingSystem(ICoroutineRunner coroutineRunner, SpellBookView spellBookView)
     {
         _spellKeys = new Dictionary<KeyCode, MagicElements>()
         {
@@ -44,13 +45,18 @@ public class SpellCastingSystem
 
         _currentCombo = new MagicElements[MaxComboLength];
         _spellBook = new SpellBook();
+        _spellBookView = spellBookView;
     }
 
     public bool TryActiveSpell()
     {
         if (TryGetCurrentComboPattern(out MagicElementsPattern result))
         {
-            return _spellBook.TrySetActiveSpell(result);
+            if (_spellBook.TrySetActiveSpell(result))
+            {
+                _spellBookView.SetSpellIcon(_spellBook.CurrentActiveSpell.Data);
+                return true;
+            }
         }
 
         return false;
@@ -98,10 +104,12 @@ public class SpellCastingSystem
             }
         }
 
+        _spellBookView.SetPattern(item, _currentSpellIndex);
         _currentCombo[_currentSpellIndex++] = item;
 
         if (_currentSpellIndex >= _currentCombo.Length)
             _currentSpellIndex = 0;
+
 
         Debug.Log($"" +
             $"1. {_currentCombo[0]}\n" +
