@@ -14,7 +14,6 @@ public enum MagicElements
     Frost = 5,
     Inferno = 6,
     Life = 7,
-    Light = 8,
 }
 
 public class SpellCastingSystem
@@ -23,39 +22,49 @@ public class SpellCastingSystem
 
     private IReadOnlyDictionary<KeyCode, MagicElements> _spellKeys;
     private MagicElements[] _currentCombo;
+    private SpellBook _spellBook;
 
-    public string CurrentComboPattern => GetCurrentComboPattern();
+    public Spell CurrentActiveSpell => _spellBook.CurrentActiveSpell;
 
     public SpellCastingSystem(ICoroutineRunner coroutineRunner)
     {
         _spellKeys = new Dictionary<KeyCode, MagicElements>()
         {
-            [KeyCode.Alpha1] = MagicElements.Arcane,
-            [KeyCode.Alpha2] = MagicElements.Death,
-            [KeyCode.Alpha3] = MagicElements.Earth,
-            [KeyCode.Alpha4] = MagicElements.Fire,
-            [KeyCode.Alpha5] = MagicElements.Frost,
-            [KeyCode.Alpha6] = MagicElements.Inferno,
-            [KeyCode.Alpha7] = MagicElements.Life,
-            [KeyCode.Alpha8] = MagicElements.Light,
-
+            [KeyCode.Z] = MagicElements.Arcane,
+            [KeyCode.X] = MagicElements.Death,
+            [KeyCode.C] = MagicElements.Earth,
+            [KeyCode.V] = MagicElements.Fire,
+            [KeyCode.B] = MagicElements.Frost,
+            [KeyCode.N] = MagicElements.Inferno,
+            [KeyCode.M] = MagicElements.Life,
         };
 
         coroutineRunner.StartCoroutine(Listening());
 
         _currentCombo = new MagicElements[MaxComboLength];
+        _spellBook = new SpellBook();
     }
 
-    private string GetCurrentComboPattern()
+    public bool TryActiveSpell()
     {
-        string result = "";
-
-        foreach (var spell in _currentCombo)
+        if (TryGetCurrentComboPattern(out MagicElementsPattern result))
         {
-            result += spell;
+            return _spellBook.TrySetActiveSpell(result);
         }
 
-        return result;
+        return false;
+    }
+
+    private bool TryGetCurrentComboPattern(out MagicElementsPattern result)
+    {
+        result = new MagicElementsPattern();
+
+        if (_currentCombo[0] == default || _currentCombo[1] == default || _currentCombo[2] == default)
+            return false;
+
+        result = new MagicElementsPattern(_currentCombo[0], _currentCombo[1], _currentCombo[2]);
+
+        return true;
     }
 
     private IEnumerator Listening()
@@ -74,9 +83,12 @@ public class SpellCastingSystem
         {
             foreach (KeyCode key in Enum.GetValues(typeof(KeyCode)))
             {
-                if (Input.GetKeyDown(key) && _spellKeys.ContainsKey(key))
+                if (Input.GetKeyDown(key))
                 {
-                    FillComboArray(_spellKeys[key]);
+                    Debug.Log(key);
+
+                    if (_spellKeys.ContainsKey(key))
+                        FillComboArray(_spellKeys[key]);
                 }
             }
         }
@@ -94,47 +106,16 @@ public class SpellCastingSystem
         }
 
         _currentCombo[0] = item;
+
+        Debug.Log($"" +
+            $"1. {_currentCombo[0]}\n" +
+            $"2. {_currentCombo[1]}\n" +
+            $"3. {_currentCombo[2]}\n"
+            );
     }
-}
 
-public class SpellBook
-{
-    private List<Spell> _spells;
-
-    public SpellBook()
+    public void Cast()
     {
-        _spells = new List<Spell>();
-
-
-    }
-}
-
-public class Spell
-{
-    public Spell()
-    {
-        
-    }
-}
-
-[CreateAssetMenu(menuName = "StaticData/Spells/New Spell Data", fileName = "New Spell Data", order = 54)]
-public class SpellData : ScriptableObject
-{
-    [field: SerializeField] public string Name { get; private set; }
-    [field: SerializeField] public string Description { get; private set; }
-    [field: SerializeField] public Sprite Icon { get; private set; }
-}
-
-public struct MagicElementsPattern
-{
-    public MagicElements First { get; private set; }
-    public MagicElements Second { get; private set; }
-    public MagicElements Third { get; private set; }
-
-    public MagicElementsPattern(MagicElements first, MagicElements second, MagicElements third)
-    {
-        first = First;
-        second = Second;
-        third = Third;
+        CurrentActiveSpell.Use();
     }
 }

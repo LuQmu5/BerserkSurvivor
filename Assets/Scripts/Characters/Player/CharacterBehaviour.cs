@@ -47,6 +47,9 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
 
         if (_input.Combat.Attack.triggered)
             TryAttack();
+
+        if (_input.Combat.ActivateSpell.triggered)
+            _combatSystem.TryActivateSpell();
     }
 
     public void ApplyDamage(float amount)

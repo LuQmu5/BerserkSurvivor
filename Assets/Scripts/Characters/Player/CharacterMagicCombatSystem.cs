@@ -19,19 +19,23 @@ public class CharacterMagicCombatSystem
         _spellCastingSystem = new SpellCastingSystem(coroutineRunner);
     }
 
+    public bool TryActivateSpell()
+    {
+        return _spellCastingSystem.TryActiveSpell();
+    }
+
     public bool TryStartAttack()
     {
         if (_attackCooldownRefreshingRoutine != null)
             return false;
 
+        if (_spellCastingSystem.CurrentActiveSpell == null)
+            return false;
+
         _attackCooldownRefreshingRoutine = _coroutineRunner.StartCoroutine(AttackCooldownRefreshing());
+        _spellCastingSystem.Cast();
 
         return true;
-    }
-
-    private void TryCastSpell()
-    {
-
     }
 
     private IEnumerator AttackCooldownRefreshing()
