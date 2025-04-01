@@ -5,21 +5,16 @@ using UnityEngine.Windows;
 public class CharacterMagicCombatSystem
 {
     private ICoroutineRunner _coroutineRunner;
-    private Coroutine _attackCooldownRefreshingRoutine;
     private float _currentAttackCooldown;
     private CharacterStats _characterStats;
     private SpellCastingSystem _spellCastingSystem;
     private SpellBookView _spellBookView;
-    private Coroutine _attackPerformProcessingCoroutine;
     private ICharacterView _view;
     private PlayerInput _input;
 
     private Coroutine _attackCooldownRefreshingCoroutine;
 
     public SpellData ActiveSpellData => _spellCastingSystem.CurrentActiveSpell.Data;
-    public bool AttackEnabled => _attackCooldownRefreshingRoutine == null;
-    public float AttackCooldown => _currentAttackCooldown;
-    public bool CanAttack => IsAttackPossible();
 
     public CharacterMagicCombatSystem(ICoroutineRunner coroutineRunner, CharacterStats characterStats, SpellBookView spellBookView, ICharacterView view, PlayerInput input)
     {
@@ -36,71 +31,46 @@ public class CharacterMagicCombatSystem
         return _spellCastingSystem.TryActiveSpell();
     }
 
-    public bool IsAttackPossible()
+    public bool TryStartAttackPerform()
     {
-        if (_attackCooldownRefreshingRoutine != null)
+        Debug.LogWarning("Try start to perform attack");
+        Debug.LogWarning($"Attack on cooldown: {_attackCooldownRefreshingCoroutine != null}");
+        Debug.LogWarning($"No Active Spell Data Is Set: {ActiveSpellData == null}");
+        Debug.LogWarning($"Attack animation in progress: {_view.AttackAnimationInProgress}");
+
+        if (_attackCooldownRefreshingCoroutine != null) // tyt trabla
             return false;
 
-        if (_spellCastingSystem.CurrentActiveSpell == null)
+        if (ActiveSpellData == null)
             return false;
+
+        if (_view.TryStartAttackAnimation(ActiveSpellData.CastAnimationName) == false)
+            return false;
+
+        Debug.LogWarning("Attack started");
+        _view.CurrentAnimationPerformed += OnAnimationPerformed;
+        _view.CurrentAnimationCanceled += OnAnimationCanceled;
 
         return true;
     }
 
-    public void StartAttackPerform()
+    private void OnAnimationCanceled()
     {
-        if (_attackPerformProcessingCoroutine != null)
-            _coroutineRunner.StopCoroutine(_attackPerformProcessingCoroutine);
+        Debug.LogWarning("Attack Canceled!");
 
-        _attackPerformProcessingCoroutine = _coroutineRunner.StartCoroutine(AttackPerformProcessing());
-        _view.CurrentAnimationPerformed += PerformAttack; // много подписок
-        Debug.LogWarning("Sub to perf att");
+        _view.CurrentAnimationPerformed -= OnAnimationPerformed;
+        _view.CurrentAnimationCanceled -= OnAnimationCanceled;
     }
 
-    private IEnumerator AttackPerformProcessing()
-    {
-        yield return new WaitForEndOfFrame();
-
-        float totalProcessLength = _view.GetCurrentAnimationLength();
-        float currentProcessLength = totalProcessLength;
-
-        while (currentProcessLength > 0)
-        {
-            if (_input.Combat.Attack.IsPressed())
-            {
-                currentProcessLength = Mathf.Clamp(currentProcessLength - Time.deltaTime, 0, currentProcessLength);
-
-                yield return null;
-            }
-            else
-            {
-                if (_input.Combat.Attack.IsInProgress())
-                    continue;
-
-                Debug.Log("Breaked Pressing");
-                _attackPerformProcessingCoroutine = null;
-                currentProcessLength = 0;
-
-                _view.CallEndOfAttackAnimation(isBreaked: true);
-                _view.CurrentAnimationPerformed -= PerformAttack;
-
-                yield break;
-            }
-
-            yield return null;
-            // Debug.Log($"Progress Pressing: {currentProcessLength / totalProcessLength}");
-        }
-    }
-
-    private void PerformAttack(ICharacterView viewCaller)
+    private void OnAnimationPerformed()
     {
         Debug.LogWarning("Attack Performed!");
 
-        EndAttackProcessing();
-        RunAttackCooldown();
+        _view.CurrentAnimationPerformed -= OnAnimationPerformed;
+        _view.CurrentAnimationCanceled -= OnAnimationCanceled;
 
+        RunAttackCooldown();
         _spellCastingSystem.Cast();
-        viewCaller.CurrentAnimationPerformed -= PerformAttack;
     }
 
     private void RunAttackCooldown()
@@ -109,12 +79,6 @@ public class CharacterMagicCombatSystem
             _coroutineRunner.StopCoroutine(_attackCooldownRefreshingCoroutine);
 
         _attackCooldownRefreshingCoroutine = _coroutineRunner.StartCoroutine(AttackCooldownRefreshing());
-    }
-
-    private void EndAttackProcessing()
-    {
-        if (_attackPerformProcessingCoroutine != null)
-            _coroutineRunner.StopCoroutine(_attackPerformProcessingCoroutine);
     }
 
     private IEnumerator AttackCooldownRefreshing()
@@ -135,6 +99,6 @@ public class CharacterMagicCombatSystem
             yield return null;
         }
 
-        _attackCooldownRefreshingRoutine = null;
+        _attackCooldownRefreshingCoroutine = null;
     }
 }

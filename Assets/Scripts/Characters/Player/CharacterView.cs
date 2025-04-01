@@ -1,9 +1,13 @@
 using UnityEngine;
 using System;
 using Random = UnityEngine.Random;
+using System.Linq;
+using NUnit.Framework;
+using System.Collections.Generic;
 
 public enum AnimationNames
 {
+    None,
     Idle,
     Run,
     SimpleAttack,
@@ -22,42 +26,45 @@ public class CharacterView : ICharacterView
     private const string BreakAttackAnimationTrigger = nameof(BreakAttackAnimationTrigger);
 
     private Animator _animator;
+    private List<AnimationNames> _attackAnimations;
 
-    public bool AttackInProgress => IsAttackAnimationActive();
+    public bool AttackAnimationInProgress { get; private set; } = false;
 
-    public event Action<ICharacterView> CurrentAnimationPerformed;
+    public event Action CurrentAnimationPerformed;
+    public event Action CurrentAnimationCanceled;
 
     public CharacterView(Animator animator)
     {
         _animator = animator;
-    }
 
-    private bool IsAttackAnimationActive()
-    {
-        AnimatorClipInfo[] clipInfo = _animator.GetCurrentAnimatorClipInfo(0);
-
-        if (clipInfo.Length > 0)
+        _attackAnimations = new List<AnimationNames>()
         {
-            string clipName = clipInfo[0].clip.name;
-            return clipName.Contains(AttackVariation);
-        }
-
-        return false;
+            AnimationNames.SimpleAttack,
+            AnimationNames.EarthSlam,
+            AnimationNames.Buff,
+            AnimationNames.HeavySlowAttack ,
+            AnimationNames.Channeling,
+            AnimationNames.EarthSlamChanneling,
+        };
     }
 
-    public void StartAnimation(AnimationNames name)
+    public bool TryStartAttackAnimation(AnimationNames name)
     {
+        if (AttackAnimationInProgress)
+            return false;
+
         _animator.Play(name.ToString());
+        AttackAnimationInProgress = true;
+
+        Debug.LogWarning("Attack in Progress: " + AttackAnimationInProgress);
+        Debug.LogWarning(name + " is playing");
+
+        return true;
     }
 
     public void SetRunningState(bool isRunning)
     {
         _animator.SetBool(IsRunning, isRunning);
-
-        if (isRunning && IsAttackAnimationActive())
-        {
-            CallEndOfAttackAnimation(isBreaked: true);
-        }
     }
 
     public void SetAttackSpeedMultiplier(float value)
@@ -73,17 +80,16 @@ public class CharacterView : ICharacterView
     /// <summary>
     /// calling in animations events, maybe make with routines and timers
     /// </summary>
-    public void CallEndOfAttackAnimation(bool isBreaked)
+    public void CallEndOfAttackAnimation(bool isCanceled)
     {
-        Debug.Log("Break: " + isBreaked);
+        Debug.Log("Canceled animation: " + isCanceled);
 
-        _animator.SetBool(IsRunning, false);
-        _animator.Play(AnimationNames.Idle.ToString());
+        AttackAnimationInProgress = false;
         _animator.SetTrigger(BreakAttackAnimationTrigger);
 
-        if (isBreaked == false)
-            CurrentAnimationPerformed?.Invoke(this);
+        if (isCanceled)
+            CurrentAnimationCanceled?.Invoke();
+        else
+            CurrentAnimationPerformed?.Invoke();
     }
-
-    public float GetCurrentAnimationLength() => _animator.GetCurrentAnimatorClipInfo(0).Length;
 }

@@ -2,13 +2,13 @@
 
 public interface ICharacterView
 {
-    bool AttackInProgress { get; }
+    bool AttackAnimationInProgress { get; }
 
-    event Action<ICharacterView> CurrentAnimationPerformed;
+    event Action CurrentAnimationPerformed;
+    event Action CurrentAnimationCanceled;
 
     void CallEndOfAttackAnimation(bool isBreaked);
-    void StartAnimation(AnimationNames name);
+    bool TryStartAttackAnimation(AnimationNames name);
     void SetAttackSpeedMultiplier(float value);
     void SetRunningState(bool state);
-    float GetCurrentAnimationLength();
 }

@@ -16,8 +16,8 @@ public class SpellBook
     private const string SpellsPath = "StaticData/Spells";
 
     private List<Spell> _spells;
-    
-    public Spell CurrentActiveSpell { get; private set; }
+
+    public Spell CurrentActiveSpell { get; private set; } = null;
 
     public SpellBook()
     {

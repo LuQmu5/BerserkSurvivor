@@ -42,22 +42,14 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
 
         // проверки на разные типы атак (с шифтом и контрол) и вызов разных методов, которые вызывают разные методы юзания спелла 
         if (_input.Combat.Attack.inProgress)
-        {
             TryAttack();
-            Rotate(inputVector, toMouse: true);
-            _mover.FreezeMovementFor(GameConfig.StartAttackFreezeTreshold);
-            Debug.LogWarning("byu");
-        }
         else
-        {
-            Rotate(inputVector, toMouse: false);
             Move(inputVector);
-        }
 
         if (_input.Combat.ActivateSpell.triggered)
             _combatSystem.TryActivateSpell();
 
-        // For Animations
+        Rotate(inputVector, toMouse: _input.Combat.Attack.inProgress);
         _stats.TryGetCurrentValueOfStat(StatNames.AttackSpeed, out float attackSpeed);
         _view.SetAttackSpeedMultiplier(attackSpeed);
     }
@@ -78,7 +70,7 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
     /// </summary>
     public void AttackAnimationPerformed()
     {
-        _view.CallEndOfAttackAnimation(isBreaked: false);
+        _view.CallEndOfAttackAnimation(isCanceled: false);
     }
 
     private void Rotate(Vector3 inputVector, bool toMouse)
@@ -86,27 +78,16 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
         _mover.Rotate(inputVector, toMouse);
     }
 
-    private bool TryAttack()
+    private void TryAttack()
     {
-        if (_combatSystem.CanAttack)
-        {
-            _combatSystem.StartAttackPerform();
-            _view.StartAnimation(_combatSystem.ActiveSpellData.CastAnimationName);
-
-            return true;
-        }
-
-        return false;
+        _combatSystem.TryStartAttackPerform();
+        _view.SetRunningState(false);
     }
-
 
     private void Move(Vector3 inputVector)
     {
-        if (_mover.TryMove(inputVector, _view.AttackInProgress))
-        {
-            bool predicateToRun = inputVector.sqrMagnitude > 0 && _mover.MoveIsFreezed == false;
-            _view.SetRunningState(predicateToRun);
-        }
+        bool isRunning = _mover.TryMove(inputVector, _view.AttackAnimationInProgress);
+        _view.SetRunningState(isRunning);
     }
 
     private Vector3 GetInputAxis() => new Vector2(SimpleInput.GetAxis(HorizintalAxis), SimpleInput.GetAxis(VerticalAxis));
