@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using Zenject;
 
-public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
+public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IItemPicker
 {
     private const string HorizintalAxis = "Horizontal";
     private const string VerticalAxis = "Vertical";
@@ -91,6 +91,12 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
     }
 
     private Vector3 GetInputAxis() => new Vector2(SimpleInput.GetAxis(HorizintalAxis), SimpleInput.GetAxis(VerticalAxis));
+
+    public void PickUp(Item item)
+    {
+        print(item.Name);
+        item.gameObject.SetActive(false);
+    }
 }
 
 public interface ICoroutineRunner
