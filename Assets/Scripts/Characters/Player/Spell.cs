@@ -72,3 +72,15 @@ public class TrailOfLifeSpell : Spell
         Debug.Log(ToString() + " creates the trail of life magic behind the character");
     }
 }
+
+public class EarthQuake : Spell
+{
+    public EarthQuake(SpellData data) : base(data)
+    {
+    }
+
+    public override void Use()
+    {
+        Debug.Log(ToString() + " creates a earth quake in a point of caster");
+    }
+}

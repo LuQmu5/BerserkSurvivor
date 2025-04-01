@@ -8,7 +8,8 @@ public enum SpellNames
     Frostbolt,
     ArcaneMissile,
     Heal,
-    TrailOfLife
+    TrailOfLife,
+    EarthQuake
 }
 
 public class SpellBook
@@ -23,19 +24,21 @@ public class SpellBook
     {
         SpellData[] spellsData = Resources.LoadAll<SpellData>(SpellsPath);
 
-        SpellData fireball = spellsData.First(i => i.Name == SpellNames.Fireball);
-        SpellData frostbolt = spellsData.First(i => i.Name == SpellNames.Frostbolt);
-        SpellData arcaneMissile = spellsData.First(i => i.Name == SpellNames.ArcaneMissile);
-        SpellData heal = spellsData.First(i => i.Name == SpellNames.Heal);
-        SpellData trailOfLife = spellsData.First(i => i.Name == SpellNames.TrailOfLife);
+        SpellData fireballData = spellsData.First(i => i.Name == SpellNames.Fireball);
+        SpellData frostboltData = spellsData.First(i => i.Name == SpellNames.Frostbolt);
+        SpellData arcaneMissileData = spellsData.First(i => i.Name == SpellNames.ArcaneMissile);
+        SpellData healData = spellsData.First(i => i.Name == SpellNames.Heal);
+        SpellData trailOfLifeData = spellsData.First(i => i.Name == SpellNames.TrailOfLife);
+        SpellData earthQuakeData = spellsData.First(i => i.Name == SpellNames.EarthQuake);
 
         _spells = new List<Spell>()
         {
-            new FireballSpell(fireball),
-            new FrostboltSpell(frostbolt),
-            new ArcaneMissileSpell(arcaneMissile),
-            new HealSpell(heal),
-            new TrailOfLifeSpell(trailOfLife)
+            new FireballSpell(fireballData),
+            new FrostboltSpell(frostboltData),
+            new ArcaneMissileSpell(arcaneMissileData),
+            new HealSpell(healData),
+            new TrailOfLifeSpell(trailOfLifeData),
+            new EarthQuake(earthQuakeData),
         };
 
         CurrentActiveSpell = null;
