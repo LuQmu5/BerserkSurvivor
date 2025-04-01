@@ -34,10 +34,13 @@ public class CharacterMagicCombatSystem
         if (_spellCastingSystem.CurrentActiveSpell == null)
             return false;
 
+        return true;
+    }
+
+    public void PerformAttack()
+    {
         _spellCastingSystem.Cast();
         _attackCooldownRefreshingRoutine = _coroutineRunner.StartCoroutine(AttackCooldownRefreshing());
-
-        return true;
     }
 
     private IEnumerator AttackCooldownRefreshing()

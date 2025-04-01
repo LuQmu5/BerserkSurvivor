@@ -65,6 +65,14 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
             gameObject.SetActive(false);
     }
 
+    /// <summary>
+    /// calling in animations events, maybe make with routines and timers
+    /// </summary>
+    public void AttackAnimationPerformed()
+    {
+        _view.CallEndOfAttackAnimation(isBreaked: false);
+    }
+
     private void Rotate(Vector3 inputVector)
     {
         if (_view.AttackInProgress)
@@ -82,13 +90,21 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
         if (_view.AttackInProgress)
             return false;
 
+        if (_combatSystem.TryStartAttack())
+        {
+            _view.PlayAttackAnimation();
+            _view.CurrentAnimationPerformed += PerformAttack;
 
-        if (_combatSystem.TryStartAttack() == false)
-            return false;
+            return true;
+        }
 
-        _view.PlayAttackAnimation();
-        
-        return true;
+        return false;
+    }
+
+    private void PerformAttack(ICharacterView viewCaller)
+    {
+        _combatSystem.PerformAttack();
+        viewCaller.CurrentAnimationPerformed -= PerformAttack;
     }
 
     private void Move(Vector3 inputVector)

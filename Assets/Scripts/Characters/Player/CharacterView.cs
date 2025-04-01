@@ -2,16 +2,19 @@ using UnityEngine;
 using System;
 using Random = UnityEngine.Random;
 
-public class CharacterView
+public class CharacterView : ICharacterView
 {
     private const string IsRunning = nameof(IsRunning);
     private const string AttackVariation = nameof(AttackVariation);
     private const string AttackSpeedMultiplier = nameof(AttackSpeedMultiplier);
+    private const string BreakAttackAnimationTrigger = nameof(BreakAttackAnimationTrigger);
 
     private Animator _animator;
     private int _attackVariationsCount;
 
-    public bool AttackInProgress => IsAttackAnimationIsActive();
+    public bool AttackInProgress => IsAttackAnimationActive();
+
+    public event Action<ICharacterView> CurrentAnimationPerformed;
 
     public CharacterView(Animator animator)
     {
@@ -20,7 +23,7 @@ public class CharacterView
         Debug.Log(_attackVariationsCount);
     }
 
-    private bool IsAttackAnimationIsActive()
+    private bool IsAttackAnimationActive()
     {
         AnimatorClipInfo[] clipInfo = _animator.GetCurrentAnimatorClipInfo(0);
 
@@ -39,9 +42,14 @@ public class CharacterView
         _animator.Play(AttackVariation + index);
     }
 
-    public void SetRunningState(bool state)
+    public void SetRunningState(bool isRunning)
     {
-        _animator.SetBool(IsRunning, state);
+        _animator.SetBool(IsRunning, isRunning);
+
+        if (isRunning && IsAttackAnimationActive())
+        {
+            CallEndOfAttackAnimation(isBreaked: true);
+        }
     }
 
     public void SetAttackSpeedMultiplier(float value)
@@ -68,5 +76,16 @@ public class CharacterView
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// calling in animations events, maybe make with routines and timers
+    /// </summary>
+    public void CallEndOfAttackAnimation(bool isBreaked)
+    {
+        _animator.SetTrigger(BreakAttackAnimationTrigger);
+
+        if (isBreaked == false)
+            CurrentAnimationPerformed?.Invoke(this);
     }
 }
