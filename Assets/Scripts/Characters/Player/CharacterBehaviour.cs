@@ -12,7 +12,7 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
     private CharacterStats _stats;
     private Animator _animator;
 
-    private CharacterMagicCombatSystem _combatSystem;
+    private CharacterCombatSystem _combatSystem;
     private CharacterMover _mover;
     private CharacterView _view;
 
@@ -29,7 +29,7 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
         _stats = stats;
 
         _view = new CharacterView(GetComponent<Animator>());
-        _combatSystem = new CharacterMagicCombatSystem(this, stats, spellBookView, _view, _input);
+        _combatSystem = new CharacterCombatSystem(this, stats, spellBookView, _view);
         _mover = new CharacterMover(GetComponent<CharacterController>(), 10, 10, this);
 
         MaxHealth = 10;
@@ -41,7 +41,7 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
         Vector3 inputVector = Camera.main.transform.TransformDirection(GetInputAxis());
 
         // проверки на разные типы атак (с шифтом и контрол) и вызов разных методов, которые вызывают разные методы юзания спелла 
-        if (_input.Combat.Attack.inProgress)
+        if (_input.Combat.Attack.inProgress && _combatSystem.AttackOnCooldown == false)
             TryAttack();
         else
             Move(inputVector);
@@ -49,7 +49,7 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
         if (_input.Combat.ActivateSpell.triggered)
             _combatSystem.TryActivateSpell();
 
-        Rotate(inputVector, toMouse: _input.Combat.Attack.inProgress);
+        Rotate(inputVector, toMouse: _input.Combat.Attack.inProgress && _combatSystem.AttackOnCooldown == false);
         _stats.TryGetCurrentValueOfStat(StatNames.AttackSpeed, out float attackSpeed);
         _view.SetAttackSpeedMultiplier(attackSpeed);
     }

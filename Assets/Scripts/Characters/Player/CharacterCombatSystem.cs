@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Windows;
 
-public class CharacterMagicCombatSystem
+public class CharacterCombatSystem
 {
     private ICoroutineRunner _coroutineRunner;
     private float _currentAttackCooldown;
@@ -10,19 +10,18 @@ public class CharacterMagicCombatSystem
     private SpellCastingSystem _spellCastingSystem;
     private SpellBookView _spellBookView;
     private ICharacterView _view;
-    private PlayerInput _input;
 
     private Coroutine _attackCooldownRefreshingCoroutine;
 
     public SpellData ActiveSpellData => _spellCastingSystem.CurrentActiveSpell.Data;
+    public bool AttackOnCooldown => _attackCooldownRefreshingCoroutine != null;
 
-    public CharacterMagicCombatSystem(ICoroutineRunner coroutineRunner, CharacterStats characterStats, SpellBookView spellBookView, ICharacterView view, PlayerInput input)
+    public CharacterCombatSystem(ICoroutineRunner coroutineRunner, CharacterStats characterStats, SpellBookView spellBookView, ICharacterView view)
     {
         _coroutineRunner = coroutineRunner;
         _characterStats = characterStats;
         _spellCastingSystem = new SpellCastingSystem(coroutineRunner, spellBookView);
         _spellBookView = spellBookView;
-        _input = input;
         _view = view;
     }
 
