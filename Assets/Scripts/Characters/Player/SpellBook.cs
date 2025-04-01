@@ -5,7 +5,10 @@ using UnityEngine;
 public enum SpellNames
 {
     Fireball,
-    Frostbolt
+    Frostbolt,
+    ArcaneMissile,
+    Heal,
+    TrailOfLife
 }
 
 public class SpellBook
@@ -22,14 +25,20 @@ public class SpellBook
 
         SpellData fireball = spellsData.First(i => i.Name == SpellNames.Fireball);
         SpellData frostbolt = spellsData.First(i => i.Name == SpellNames.Frostbolt);
+        SpellData arcaneMissile = spellsData.First(i => i.Name == SpellNames.ArcaneMissile);
+        SpellData heal = spellsData.First(i => i.Name == SpellNames.Heal);
+        SpellData trailOfLife = spellsData.First(i => i.Name == SpellNames.TrailOfLife);
 
         _spells = new List<Spell>()
         {
             new FireballSpell(fireball),
             new FrostboltSpell(frostbolt),
+            new ArcaneMissileSpell(arcaneMissile),
+            new HealSpell(heal),
+            new TrailOfLifeSpell(trailOfLife)
         };
 
-        CurrentActiveSpell = _spells[0];
+        CurrentActiveSpell = null;
     }
 
     public bool TrySetActiveSpell(MagicElementsPattern pattern)

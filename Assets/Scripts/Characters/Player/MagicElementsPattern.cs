@@ -4,20 +4,20 @@ using UnityEngine;
 [Serializable]
 public struct MagicElementsPattern
 {
-    [field: SerializeField] public MagicElements First { get; private set; }
-    [field: SerializeField] public MagicElements Second { get; private set; }
-    [field: SerializeField] public MagicElements Third { get; private set; }
+    [field: SerializeField] public MagicElements FirstSigil { get; private set; }
+    [field: SerializeField] public MagicElements SecondSigil { get; private set; }
+    [field: SerializeField] public MagicElements ThirdSigil { get; private set; }
 
-    public MagicElementsPattern(MagicElements first, MagicElements second, MagicElements third)
+    public MagicElementsPattern(MagicElements firstSigil, MagicElements secondSigil, MagicElements thirdSigil)
     {
-        First = first;
-        Second = second;
-        Third = third;
+        FirstSigil = firstSigil;
+        SecondSigil = secondSigil;
+        ThirdSigil = thirdSigil;
     }
 
     public override string ToString()
     {
-        return First.ToString() + Second.ToString() + Third.ToString();
+        return FirstSigil.ToString() + SecondSigil.ToString() + ThirdSigil.ToString();
     }
 
     public override bool Equals(object obj)
@@ -27,7 +27,7 @@ public struct MagicElementsPattern
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(First, Second, Third);
+        return HashCode.Combine(FirstSigil, SecondSigil, ThirdSigil);
     }
 
     public static bool operator ==(MagicElementsPattern c1, MagicElementsPattern c2)

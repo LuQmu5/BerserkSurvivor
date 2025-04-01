@@ -7,18 +7,25 @@ public class SpellBookView : MonoBehaviour
     [SerializeField] private Image _spellIcon;
     [SerializeField] private Image _spellCooldownIcon;
 
-    public void Init(SpellData startSpell)
-    {
-        SetPattern(startSpell.Pattern.First, 0);
-        SetPattern(startSpell.Pattern.Second, 1);
-        SetPattern(startSpell.Pattern.Third, 2);
+    private int _currentActiveSigilViewIndex = 0;
 
-        SetSpellIcon(startSpell);
+    private void Start()
+    {
+        _currentActiveSigilViewIndex = 0;
+        _sigilsView[_currentActiveSigilViewIndex].ActivateBorder();
     }
 
     public void SetPattern(MagicElements element, int index)
     {
         _sigilsView[index].SetIconFor(element);
+
+        _sigilsView[_currentActiveSigilViewIndex].DeactivateBorder();
+        _currentActiveSigilViewIndex++;
+
+        if (_currentActiveSigilViewIndex >= _sigilsView.Length)
+            _currentActiveSigilViewIndex = 0;
+
+        _sigilsView[_currentActiveSigilViewIndex].ActivateBorder();
     }
 
     public void SetSpellIcon(SpellData spell)

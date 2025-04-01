@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb658202680b1f242ac49c16c7183404, type: 3}
-  m_Name: Frostbolt
+  m_Name: ArcaneMissile
   m_EditorClassIdentifier: 
-  <Name>k__BackingField: 1
+  <Name>k__BackingField: 2
   <Description>k__BackingField: Default bolt of frost ice
-  <Icon>k__BackingField: {fileID: 21300000, guid: c51afa706b02a044694b30f33f81d239, type: 3}
+  <Icon>k__BackingField: {fileID: 21300000, guid: 4029a9cfeb86f134c9c5af05993eaac8, type: 3}
   <Pattern>k__BackingField:
-    <FirstSigil>k__BackingField: 3
-    <SecondSigil>k__BackingField: 5
+    <FirstSigil>k__BackingField: 1
+    <SecondSigil>k__BackingField: 1
     <ThirdSigil>k__BackingField: 8

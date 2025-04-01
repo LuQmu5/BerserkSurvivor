@@ -14,6 +14,7 @@ public enum MagicElements
     Frost = 5,
     Inferno = 6,
     Life = 7,
+    Wind = 8
 }
 
 public class SpellCastingSystem
@@ -39,6 +40,7 @@ public class SpellCastingSystem
             [KeyCode.B] = MagicElements.Frost,
             [KeyCode.N] = MagicElements.Inferno,
             [KeyCode.M] = MagicElements.Life,
+            [KeyCode.L] = MagicElements.Wind,
         };
 
         coroutineRunner.StartCoroutine(Listening());

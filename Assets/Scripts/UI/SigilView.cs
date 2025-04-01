@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class SigilView : MonoBehaviour
 {
     [SerializeField] private Image _image;
+    [SerializeField] private Image _activeBorder;
 
     [Header("Icons")]
     [SerializeField] private Sprite ArcaneSigil;
@@ -13,6 +14,7 @@ public class SigilView : MonoBehaviour
     [SerializeField] private Sprite FrostSigil;
     [SerializeField] private Sprite InfernoSigil;
     [SerializeField] private Sprite LifeSigil;
+    [SerializeField] private Sprite WindSigil;
 
     public void SetIconFor(MagicElements element)
     {
@@ -45,6 +47,20 @@ public class SigilView : MonoBehaviour
             case MagicElements.Life:
                 _image.sprite = LifeSigil;
                 break;
+
+            case MagicElements.Wind:
+                _image.sprite = WindSigil;
+                break;
         }
+    }
+
+    public void ActivateBorder()
+    {
+        _activeBorder.gameObject.SetActive(true);
+    }
+
+    public void DeactivateBorder()
+    {
+        _activeBorder.gameObject.SetActive(false);
     }
 }
