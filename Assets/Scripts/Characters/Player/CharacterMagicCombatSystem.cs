@@ -5,18 +5,20 @@ public class CharacterMagicCombatSystem
 {
     private ICoroutineRunner _coroutineRunner;
     private Coroutine _attackCooldownRefreshingRoutine;
-    private float _attackCooldown;
+    private float _currentAttackCooldown;
     private CharacterStats _characterStats;
     private SpellCastingSystem _spellCastingSystem;
+    private SpellBookView _spellBookView;
 
     public bool AttackEnabled => _attackCooldownRefreshingRoutine == null;
-    public float AttackCooldown => _attackCooldown;
+    public float AttackCooldown => _currentAttackCooldown;
 
     public CharacterMagicCombatSystem(ICoroutineRunner coroutineRunner, CharacterStats characterStats, SpellBookView spellBookView)
     {
         _coroutineRunner = coroutineRunner;
         _characterStats = characterStats;
         _spellCastingSystem = new SpellCastingSystem(coroutineRunner, spellBookView);
+        _spellBookView = spellBookView;
     }
 
     public bool TryActivateSpell()
@@ -32,22 +34,26 @@ public class CharacterMagicCombatSystem
         if (_spellCastingSystem.CurrentActiveSpell == null)
             return false;
 
-        _attackCooldownRefreshingRoutine = _coroutineRunner.StartCoroutine(AttackCooldownRefreshing());
         _spellCastingSystem.Cast();
+        _attackCooldownRefreshingRoutine = _coroutineRunner.StartCoroutine(AttackCooldownRefreshing());
 
         return true;
     }
 
     private IEnumerator AttackCooldownRefreshing()
     {
-        _attackCooldown = _characterStats.GetStatValue(StatNames.AttackCooldown);
+        _characterStats.TryGetCurrentValueOfStat(StatNames.AttackCooldown, out _currentAttackCooldown);
 
-        while (_attackCooldown > 0) 
+        while (_currentAttackCooldown > 0) 
         {
-            _attackCooldown -= Time.deltaTime * _characterStats.GetStatValue(StatNames.AttackSpeed);
+            _characterStats.TryGetCurrentValueOfStat(StatNames.AttackSpeed, out float attackSpeed);
+            _characterStats.TryGetCurrentValueOfStat(StatNames.AttackCooldown, out float attackCooldown);
 
-            if (_attackCooldown <= 0)
-                _attackCooldown = 0;
+            _currentAttackCooldown -= Time.deltaTime + (Time.deltaTime * attackSpeed); // #test_values
+            _spellBookView.UpdateCooldownFillAmount(_currentAttackCooldown / attackCooldown);
+
+            if (_currentAttackCooldown <= 0)
+                _currentAttackCooldown = 0;
 
             yield return null;
         }

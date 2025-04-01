@@ -17,7 +17,7 @@ public class CharacterMover
 
     public void Move(Vector3 inputVector, bool attackInProgress = false)
     {
-        float speedCoeff = attackInProgress ? 0.4f : 1;
+        float speedCoeff = attackInProgress ? 0.4f : 1; // #test_values
         float deadZone = 0.1f;
 
         if (inputVector.sqrMagnitude < deadZone)

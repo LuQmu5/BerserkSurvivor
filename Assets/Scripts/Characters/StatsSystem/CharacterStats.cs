@@ -1,5 +1,9 @@
-﻿using System;
+﻿using DG.Tweening.Plugins.Core;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
+using UnityEngine;
 
 public enum StatNames
 {
@@ -10,20 +14,44 @@ public enum StatNames
 
 public class CharacterStats
 {
-    private readonly Dictionary<StatNames, float> _statMaps;
+    private readonly Stat[] _stats;
 
-    public CharacterStats()
+    public CharacterStats(StatsData data)
     {
-        _statMaps = new Dictionary<StatNames, float>()
-        {
-            [StatNames.AttackSpeed] = 1,
-            [StatNames.Agility] = 1,
-            [StatNames.AttackCooldown] = 2,
-        };
+        _stats = data.Stats;
     }
 
-    public float GetStatValue(StatNames statName)
+    public bool TryGetCurrentValueOfStat(StatNames statName, out float result)
     {
-        return _statMaps[statName];
+        result = 0;
+        Stat item = _stats.FirstOrDefault(i => i.Name == statName);
+
+        if (item.Value > 0)
+            result = item.Value;
+
+        return result > 0;
+    }
+}
+
+[Serializable]
+public struct Stat
+{
+    [field:SerializeField] public StatNames Name { get; private set; }
+    [field: SerializeField] public float Value { get; private set; }
+
+    public Stat(StatNames statName, float value)
+    {
+        Name = statName;
+        Value = value;
+    }
+
+    public bool TryChangeValue(float newValue)
+    {
+        if (newValue < 0)
+            return false;
+
+        Value = newValue;
+
+        return true;
     }
 }

@@ -6,6 +6,7 @@ public class CharacterView
 {
     private const string IsRunning = nameof(IsRunning);
     private const string AttackVariation = nameof(AttackVariation);
+    private const string AttackSpeedMultiplier = nameof(AttackSpeedMultiplier);
 
     private Animator _animator;
     private int _attackVariationsCount;
@@ -41,6 +42,16 @@ public class CharacterView
     public void SetRunningState(bool state)
     {
         _animator.SetBool(IsRunning, state);
+    }
+
+    public void SetAttackSpeedMultiplier(float value)
+    {
+        // #test_values
+        float minValue = 0.1f;
+        float maxValue = 3.5f;
+        value = Mathf.Clamp(value, minValue, maxValue);
+
+        _animator.SetFloat(AttackSpeedMultiplier, value);
     }
 
     private int GetAttackVariationsCount()

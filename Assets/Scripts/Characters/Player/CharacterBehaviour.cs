@@ -41,15 +41,17 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
         Vector3 inputVector = Camera.main.transform.TransformDirection(GetInputAxis());
 
         Rotate(inputVector);
+        Move(inputVector);
 
-        if (_view.AttackInProgress == false)
-            Move(inputVector);
-
+        // проверки на разные типы атак (с шифтом и контрол) и вызов разных методов, которые вызывают разные методы юзания спелла 
         if (_input.Combat.Attack.triggered)
             TryAttack();
 
         if (_input.Combat.ActivateSpell.triggered)
             _combatSystem.TryActivateSpell();
+
+        _stats.TryGetCurrentValueOfStat(StatNames.AttackSpeed, out float attackSpeed);
+        _view.SetAttackSpeedMultiplier(attackSpeed);
     }
 
     public void ApplyDamage(float amount)
@@ -80,11 +82,12 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
         if (_view.AttackInProgress)
             return false;
 
+
         if (_combatSystem.TryStartAttack() == false)
             return false;
-        
-        _view.PlayAttackAnimation();
 
+        _view.PlayAttackAnimation();
+        
         return true;
     }
 

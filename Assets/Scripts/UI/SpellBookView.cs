@@ -1,11 +1,15 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class SpellBookView : MonoBehaviour
 {
+    [Header("Current Spell View")]
+    [SerializeField] private Image _currentSpellIcon;
+    [SerializeField] private Image _filledCooldownSpellIcon;
+
+    [Header("Sigils View")]
     [SerializeField] private SigilView[] _sigilsView;
-    [SerializeField] private Image _spellIcon;
-    [SerializeField] private Image _spellCooldownIcon;
 
     private int _currentActiveSigilViewIndex = 0;
 
@@ -30,7 +34,12 @@ public class SpellBookView : MonoBehaviour
 
     public void SetSpellIcon(SpellData spell)
     {
-        _spellIcon.sprite = spell.Icon;
-        _spellCooldownIcon.sprite = spell.Icon;
+        _currentSpellIcon.sprite = spell.Icon;
+        _filledCooldownSpellIcon.sprite = spell.Icon;
+    }
+
+    public void UpdateCooldownFillAmount(float remainedCooldownPercent)
+    {
+        _filledCooldownSpellIcon.fillAmount = remainedCooldownPercent;
     }
 }
