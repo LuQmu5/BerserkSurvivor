@@ -5001,6 +5001,7 @@ GameObject:
   - component: {fileID: 3721124493296017152}
   - component: {fileID: 7607574787593167645}
   - component: {fileID: 7186185961416128358}
+  - component: {fileID: 3543469448462340809}
   m_Layer: 5
   m_Name: Sigil
   m_TagString: Untagged
@@ -5102,3 +5103,16 @@ MonoBehaviour:
   InfernoSigil: {fileID: 21300000, guid: f9fdbb78149b97549afa65f0b3557e9e, type: 3}
   LifeSigil: {fileID: 21300000, guid: 098dafe51c34c254286ed83a925ed4d5, type: 3}
   WindSigil: {fileID: 21300000, guid: c46be55a65cb30e44b7c89e3c0d531da, type: 3}
+  NoSigil: {fileID: 21300000, guid: 6403afd719acd2b4dbb0dfae7add33cb, type: 3}
+--- !u!225 &3543469448462340809
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8550328777524540920}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0

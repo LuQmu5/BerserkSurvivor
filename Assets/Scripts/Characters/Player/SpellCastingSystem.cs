@@ -56,7 +56,7 @@ public class SpellCastingSystem
         {
             if (_spellBook.TrySetActiveSpell(result))
             {
-                _spellBookView.SetSpellIcon(_spellBook.CurrentActiveSpell.Data);
+                _spellBookView.SetNewSpellIcon(_spellBook.CurrentActiveSpell.Data);
                 return true;
             }
         }

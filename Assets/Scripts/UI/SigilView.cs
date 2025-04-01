@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class SigilView : MonoBehaviour
@@ -15,9 +16,22 @@ public class SigilView : MonoBehaviour
     [SerializeField] private Sprite InfernoSigil;
     [SerializeField] private Sprite LifeSigil;
     [SerializeField] private Sprite WindSigil;
+    [SerializeField] private Sprite NoSigil;
+
+    private CanvasGroup _canvasGroup;
+
+    private const float BaseAlpha = 1;
+    private const float NotActiveAlpha = 0.1f;
+
+    private void Start()
+    {
+        _canvasGroup = GetComponent<CanvasGroup>();
+    }
 
     public void SetIconFor(MagicElements element)
     {
+        SetAlpha(BaseAlpha);
+
         switch (element)
         {
             case MagicElements.Arcane:
@@ -51,7 +65,22 @@ public class SigilView : MonoBehaviour
             case MagicElements.Wind:
                 _image.sprite = WindSigil;
                 break;
+
+            default:
+                ResetView();
+                break;
         }
+    }
+
+    public void SetAlpha(float value)
+    {
+        _canvasGroup.alpha = value;
+    }
+
+    private void ResetView()
+    {
+        _image.sprite = NoSigil;
+        SetAlpha(NotActiveAlpha);
     }
 
     public void ActivateBorder()
@@ -62,5 +91,10 @@ public class SigilView : MonoBehaviour
     public void DeactivateBorder()
     {
         _activeBorder.gameObject.SetActive(false);
+    }
+
+    public void SetActiveAlpha()
+    {
+        SetAlpha(BaseAlpha);
     }
 }
