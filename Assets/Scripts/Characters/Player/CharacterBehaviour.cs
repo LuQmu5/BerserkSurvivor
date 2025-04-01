@@ -88,7 +88,7 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
 
     private bool TryAttack()
     {
-        if (_combatSystem.TryStartAttack())
+        if (_combatSystem.CanAttack)
         {
             _combatSystem.StartAttackPerform();
             _view.StartAnimation(_combatSystem.ActiveSpellData.CastAnimationName);

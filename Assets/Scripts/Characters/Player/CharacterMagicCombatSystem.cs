@@ -14,9 +14,12 @@ public class CharacterMagicCombatSystem
     private ICharacterView _view;
     private PlayerInput _input;
 
+    private Coroutine _attackCooldownRefreshingCoroutine;
+
     public SpellData ActiveSpellData => _spellCastingSystem.CurrentActiveSpell.Data;
     public bool AttackEnabled => _attackCooldownRefreshingRoutine == null;
     public float AttackCooldown => _currentAttackCooldown;
+    public bool CanAttack => IsAttackPossible();
 
     public CharacterMagicCombatSystem(ICoroutineRunner coroutineRunner, CharacterStats characterStats, SpellBookView spellBookView, ICharacterView view, PlayerInput input)
     {
@@ -33,7 +36,7 @@ public class CharacterMagicCombatSystem
         return _spellCastingSystem.TryActiveSpell();
     }
 
-    public bool TryStartAttack()
+    public bool IsAttackPossible()
     {
         if (_attackCooldownRefreshingRoutine != null)
             return false;
@@ -50,6 +53,8 @@ public class CharacterMagicCombatSystem
             _coroutineRunner.StopCoroutine(_attackPerformProcessingCoroutine);
 
         _attackPerformProcessingCoroutine = _coroutineRunner.StartCoroutine(AttackPerformProcessing());
+        _view.CurrentAnimationPerformed += PerformAttack; // много подписок
+        Debug.LogWarning("Sub to perf att");
     }
 
     private IEnumerator AttackPerformProcessing()
@@ -89,11 +94,27 @@ public class CharacterMagicCombatSystem
 
     private void PerformAttack(ICharacterView viewCaller)
     {
-        if (_attackPerformProcessingCoroutine != null)
-            _coroutineRunner.StopCoroutine(_attackPerformProcessingCoroutine);
+        Debug.LogWarning("Attack Performed!");
+
+        EndAttackProcessing();
+        RunAttackCooldown();
 
         _spellCastingSystem.Cast();
         viewCaller.CurrentAnimationPerformed -= PerformAttack;
+    }
+
+    private void RunAttackCooldown()
+    {
+        if (_attackCooldownRefreshingCoroutine != null)
+            _coroutineRunner.StopCoroutine(_attackCooldownRefreshingCoroutine);
+
+        _attackCooldownRefreshingCoroutine = _coroutineRunner.StartCoroutine(AttackCooldownRefreshing());
+    }
+
+    private void EndAttackProcessing()
+    {
+        if (_attackPerformProcessingCoroutine != null)
+            _coroutineRunner.StopCoroutine(_attackPerformProcessingCoroutine);
     }
 
     private IEnumerator AttackCooldownRefreshing()
