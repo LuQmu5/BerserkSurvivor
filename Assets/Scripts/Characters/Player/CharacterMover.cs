@@ -10,6 +10,7 @@ public class CharacterMover
     private Transform _transform;
     private bool _moveIsFreezed;
     private ICoroutineRunner _coroutineRunner;
+    private Coroutine _freezingMoveCoroutine;
 
     public bool MoveIsFreezed => _moveIsFreezed;
 
@@ -65,7 +66,10 @@ public class CharacterMover
     {
         _moveIsFreezed = true;
 
-        _coroutineRunner.StartCoroutine(FreezingMovement(seconds));
+        if (_freezingMoveCoroutine != null)
+            _coroutineRunner.StopCoroutine(_freezingMoveCoroutine);
+
+        _freezingMoveCoroutine = _coroutineRunner.StartCoroutine(FreezingMovement(seconds));
     }
 
     private IEnumerator FreezingMovement(float seconds)
@@ -73,5 +77,18 @@ public class CharacterMover
         yield return new WaitForSeconds(seconds);
 
         _moveIsFreezed = false;
+        _freezingMoveCoroutine = null;
+    }
+
+    public void Rotate(Vector3 inputVector, bool toMouse)
+    {
+        if (toMouse)
+        {
+            RotateToMouse();
+        }
+        else
+        {
+            RotateToPoint(inputVector);
+        }
     }
 }

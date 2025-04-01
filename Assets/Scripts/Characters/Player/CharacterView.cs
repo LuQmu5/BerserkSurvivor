@@ -2,6 +2,18 @@ using UnityEngine;
 using System;
 using Random = UnityEngine.Random;
 
+public enum AnimationNames
+{
+    Idle,
+    Run,
+    SimpleAttack,
+    HeavySlowAttack,
+    Channeling,
+    Buff,
+    EarthSlam,
+    EarthSlamChanneling
+}
+
 public class CharacterView : ICharacterView
 {
     private const string IsRunning = nameof(IsRunning);
@@ -10,7 +22,6 @@ public class CharacterView : ICharacterView
     private const string BreakAttackAnimationTrigger = nameof(BreakAttackAnimationTrigger);
 
     private Animator _animator;
-    private int _attackVariationsCount;
 
     public bool AttackInProgress => IsAttackAnimationActive();
 
@@ -19,8 +30,6 @@ public class CharacterView : ICharacterView
     public CharacterView(Animator animator)
     {
         _animator = animator;
-        _attackVariationsCount = GetAttackVariationsCount();
-        Debug.Log(_attackVariationsCount);
     }
 
     private bool IsAttackAnimationActive()
@@ -36,10 +45,9 @@ public class CharacterView : ICharacterView
         return false;
     }
 
-    public void PlayAttackAnimation()
+    public void StartAnimation(AnimationNames name)
     {
-        int index = Random.Range(0, _attackVariationsCount);
-        _animator.Play(AttackVariation + index);
+        _animator.Play(name.ToString());
     }
 
     public void SetRunningState(bool isRunning)
@@ -62,30 +70,20 @@ public class CharacterView : ICharacterView
         _animator.SetFloat(AttackSpeedMultiplier, value);
     }
 
-    private int GetAttackVariationsCount()
-    {
-        RuntimeAnimatorController controller = _animator.runtimeAnimatorController;
-        int result = 0;
-
-        foreach (AnimationClip clip in controller.animationClips)
-        {
-            if (clip.name.Contains(AttackVariation))
-            {
-                result++;
-            }
-        }
-
-        return result;
-    }
-
     /// <summary>
     /// calling in animations events, maybe make with routines and timers
     /// </summary>
     public void CallEndOfAttackAnimation(bool isBreaked)
     {
+        Debug.Log("Break: " + isBreaked);
+
+        _animator.SetBool(IsRunning, false);
+        _animator.Play(AnimationNames.Idle.ToString());
         _animator.SetTrigger(BreakAttackAnimationTrigger);
 
         if (isBreaked == false)
             CurrentAnimationPerformed?.Invoke(this);
     }
+
+    public float GetCurrentAnimationLength() => _animator.GetCurrentAnimatorClipInfo(0).Length;
 }

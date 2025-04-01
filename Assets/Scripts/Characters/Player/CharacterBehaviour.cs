@@ -29,7 +29,7 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
         _stats = stats;
 
         _view = new CharacterView(GetComponent<Animator>());
-        _combatSystem = new CharacterMagicCombatSystem(this, stats, spellBookView);
+        _combatSystem = new CharacterMagicCombatSystem(this, stats, spellBookView, _view, _input);
         _mover = new CharacterMover(GetComponent<CharacterController>(), 10, 10, this);
 
         MaxHealth = 10;
@@ -40,19 +40,24 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
     {
         Vector3 inputVector = Camera.main.transform.TransformDirection(GetInputAxis());
 
-        Rotate(inputVector);
-        Move(inputVector);
-
         // проверки на разные типы атак (с шифтом и контрол) и вызов разных методов, которые вызывают разные методы юзания спелла 
-        if (_input.Combat.Attack.triggered)
+        if (_input.Combat.Attack.inProgress)
         {
             TryAttack();
+            Rotate(inputVector, toMouse: true);
             _mover.FreezeMovementFor(GameConfig.StartAttackFreezeTreshold);
+            Debug.LogWarning("byu");
+        }
+        else
+        {
+            Rotate(inputVector, toMouse: false);
+            Move(inputVector);
         }
 
         if (_input.Combat.ActivateSpell.triggered)
             _combatSystem.TryActivateSpell();
 
+        // For Animations
         _stats.TryGetCurrentValueOfStat(StatNames.AttackSpeed, out float attackSpeed);
         _view.SetAttackSpeedMultiplier(attackSpeed);
     }
@@ -76,27 +81,17 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
         _view.CallEndOfAttackAnimation(isBreaked: false);
     }
 
-    private void Rotate(Vector3 inputVector)
+    private void Rotate(Vector3 inputVector, bool toMouse)
     {
-        if (_view.AttackInProgress)
-        {
-            _mover.RotateToMouse();
-        }
-        else
-        {
-            _mover.RotateToPoint(inputVector);
-        }
+        _mover.Rotate(inputVector, toMouse);
     }
 
     private bool TryAttack()
     {
-        if (_view.AttackInProgress)
-            return false;
-
         if (_combatSystem.TryStartAttack())
         {
-            _view.PlayAttackAnimation();
-            _view.CurrentAnimationPerformed += PerformAttack;
+            _combatSystem.StartAttackPerform();
+            _view.StartAnimation(_combatSystem.ActiveSpellData.CastAnimationName);
 
             return true;
         }
@@ -104,17 +99,12 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
         return false;
     }
 
-    private void PerformAttack(ICharacterView viewCaller)
-    {
-        _combatSystem.PerformAttack();
-        viewCaller.CurrentAnimationPerformed -= PerformAttack;
-    }
 
     private void Move(Vector3 inputVector)
     {
         if (_mover.TryMove(inputVector, _view.AttackInProgress))
         {
-            bool predicateToRun = inputVector.sqrMagnitude > 0; // && _mover.MoveIsFreezed == false;
+            bool predicateToRun = inputVector.sqrMagnitude > 0 && _mover.MoveIsFreezed == false;
             _view.SetRunningState(predicateToRun);
         }
     }

@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Windows;
 
 public class CharacterMagicCombatSystem
 {
@@ -9,16 +10,22 @@ public class CharacterMagicCombatSystem
     private CharacterStats _characterStats;
     private SpellCastingSystem _spellCastingSystem;
     private SpellBookView _spellBookView;
+    private Coroutine _attackPerformProcessingCoroutine;
+    private ICharacterView _view;
+    private PlayerInput _input;
 
+    public SpellData ActiveSpellData => _spellCastingSystem.CurrentActiveSpell.Data;
     public bool AttackEnabled => _attackCooldownRefreshingRoutine == null;
     public float AttackCooldown => _currentAttackCooldown;
 
-    public CharacterMagicCombatSystem(ICoroutineRunner coroutineRunner, CharacterStats characterStats, SpellBookView spellBookView)
+    public CharacterMagicCombatSystem(ICoroutineRunner coroutineRunner, CharacterStats characterStats, SpellBookView spellBookView, ICharacterView view, PlayerInput input)
     {
         _coroutineRunner = coroutineRunner;
         _characterStats = characterStats;
         _spellCastingSystem = new SpellCastingSystem(coroutineRunner, spellBookView);
         _spellBookView = spellBookView;
+        _input = input;
+        _view = view;
     }
 
     public bool TryActivateSpell()
@@ -37,10 +44,56 @@ public class CharacterMagicCombatSystem
         return true;
     }
 
-    public void PerformAttack()
+    public void StartAttackPerform()
     {
+        if (_attackPerformProcessingCoroutine != null)
+            _coroutineRunner.StopCoroutine(_attackPerformProcessingCoroutine);
+
+        _attackPerformProcessingCoroutine = _coroutineRunner.StartCoroutine(AttackPerformProcessing());
+    }
+
+    private IEnumerator AttackPerformProcessing()
+    {
+        yield return new WaitForEndOfFrame();
+
+        float totalProcessLength = _view.GetCurrentAnimationLength();
+        float currentProcessLength = totalProcessLength;
+
+        while (currentProcessLength > 0)
+        {
+            if (_input.Combat.Attack.IsPressed())
+            {
+                currentProcessLength = Mathf.Clamp(currentProcessLength - Time.deltaTime, 0, currentProcessLength);
+
+                yield return null;
+            }
+            else
+            {
+                if (_input.Combat.Attack.IsInProgress())
+                    continue;
+
+                Debug.Log("Breaked Pressing");
+                _attackPerformProcessingCoroutine = null;
+                currentProcessLength = 0;
+
+                _view.CallEndOfAttackAnimation(isBreaked: true);
+                _view.CurrentAnimationPerformed -= PerformAttack;
+
+                yield break;
+            }
+
+            yield return null;
+            // Debug.Log($"Progress Pressing: {currentProcessLength / totalProcessLength}");
+        }
+    }
+
+    private void PerformAttack(ICharacterView viewCaller)
+    {
+        if (_attackPerformProcessingCoroutine != null)
+            _coroutineRunner.StopCoroutine(_attackPerformProcessingCoroutine);
+
         _spellCastingSystem.Cast();
-        _attackCooldownRefreshingRoutine = _coroutineRunner.StartCoroutine(AttackCooldownRefreshing());
+        viewCaller.CurrentAnimationPerformed -= PerformAttack;
     }
 
     private IEnumerator AttackCooldownRefreshing()

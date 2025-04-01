@@ -7,7 +7,8 @@ public interface ICharacterView
     event Action<ICharacterView> CurrentAnimationPerformed;
 
     void CallEndOfAttackAnimation(bool isBreaked);
-    void PlayAttackAnimation();
+    void StartAnimation(AnimationNames name);
     void SetAttackSpeedMultiplier(float value);
     void SetRunningState(bool state);
+    float GetCurrentAnimationLength();
 }
