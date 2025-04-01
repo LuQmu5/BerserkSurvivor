@@ -78155,7 +78155,7 @@ AnimationClip:
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
   m_Events:
-  - time: 2.1666667
+  - time: 1.3666667
     functionName: AttackAnimationPerformed
     data: 
     objectReferenceParameter: {fileID: 0}

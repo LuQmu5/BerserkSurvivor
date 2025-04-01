@@ -30,7 +30,7 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
 
         _view = new CharacterView(GetComponent<Animator>());
         _combatSystem = new CharacterMagicCombatSystem(this, stats, spellBookView);
-        _mover = new CharacterMover(GetComponent<CharacterController>(), 10, 10);
+        _mover = new CharacterMover(GetComponent<CharacterController>(), 10, 10, this);
 
         MaxHealth = 10;
         CurrentHealth = MaxHealth;
@@ -45,7 +45,10 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
 
         // проверки на разные типы атак (с шифтом и контрол) и вызов разных методов, которые вызывают разные методы юзания спелла 
         if (_input.Combat.Attack.triggered)
+        {
             TryAttack();
+            _mover.FreezeMovementFor(GameConfig.StartAttackFreezeTreshold);
+        }
 
         if (_input.Combat.ActivateSpell.triggered)
             _combatSystem.TryActivateSpell();
@@ -109,8 +112,11 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner
 
     private void Move(Vector3 inputVector)
     {
-        _mover.Move(inputVector, _view.AttackInProgress);
-        _view.SetRunningState(inputVector.sqrMagnitude > 0);
+        if (_mover.TryMove(inputVector, _view.AttackInProgress))
+        {
+            bool predicateToRun = inputVector.sqrMagnitude > 0; // && _mover.MoveIsFreezed == false;
+            _view.SetRunningState(predicateToRun);
+        }
     }
 
     private Vector3 GetInputAxis() => new Vector2(SimpleInput.GetAxis(HorizintalAxis), SimpleInput.GetAxis(VerticalAxis));

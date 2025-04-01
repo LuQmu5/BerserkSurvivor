@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using UnityEngine;
 
 public class CharacterMover
@@ -6,24 +8,34 @@ public class CharacterMover
     private float _movementSpeed = 5;
     private float _rotationSpeed = 10;
     private Transform _transform;
+    private bool _moveIsFreezed;
+    private ICoroutineRunner _coroutineRunner;
 
-    public CharacterMover(CharacterController controller, float movementSpeed, float rotationSpeed)
+    public bool MoveIsFreezed => _moveIsFreezed;
+
+    public CharacterMover(CharacterController controller, float movementSpeed, float rotationSpeed, ICoroutineRunner coroutineRunner)
     {
         _controller = controller;
         _movementSpeed = movementSpeed;
         _rotationSpeed = rotationSpeed;
         _transform = controller.transform;
+        _coroutineRunner = coroutineRunner;
     }
 
-    public void Move(Vector3 inputVector, bool attackInProgress = false)
+    public bool TryMove(Vector3 inputVector, bool attackInProgress = false)
     {
+        if (_moveIsFreezed)
+            return false;
+
         float speedCoeff = attackInProgress ? 0.4f : 1; // #test_values
         float deadZone = 0.1f;
 
         if (inputVector.sqrMagnitude < deadZone)
-            return;
+            return false;
 
         _controller.Move(new Vector3(inputVector.x, 0, inputVector.y) * _movementSpeed * speedCoeff * Time.deltaTime);
+
+        return true;
     }
 
     public void RotateToPoint(Vector3 point)
@@ -47,5 +59,19 @@ public class CharacterMover
             Quaternion targetRotation = Quaternion.LookRotation(targetPoint - _transform.position);
             _transform.rotation = Quaternion.Slerp(_transform.rotation, targetRotation, Time.deltaTime * _rotationSpeed);
         }
+    }
+
+    public void FreezeMovementFor(float seconds)
+    {
+        _moveIsFreezed = true;
+
+        _coroutineRunner.StartCoroutine(FreezingMovement(seconds));
+    }
+
+    private IEnumerator FreezingMovement(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+
+        _moveIsFreezed = false;
     }
 }
