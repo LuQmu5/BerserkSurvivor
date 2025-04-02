@@ -96,11 +96,40 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
 
     public void PickUp(Item item)
     {
-        Vector3 controlPoint = (item.transform.position + _backpackPoint.position) / 2 + Vector3.up * 2f;
+        StartCoroutine(PickingUp(item));
+    }
 
-        item.transform.DOPath(new Vector3[] { item.transform.position, controlPoint, _backpackPoint.position }, 0.7f, PathType.CatmullRom)
-            .SetEase(Ease.InOutSine)
-            .OnComplete(() => item.OnPickedUp(this));
+    private IEnumerator PickingUp(Item item)
+    {
+        float flySpeed = 1;
+
+        while (item.transform.position.y < _backpackPoint.position.y)
+        {
+            item.transform.Translate(Vector3.up * Time.deltaTime * flySpeed);
+
+            item.transform.position = Vector3.MoveTowards(item.transform.position,
+                new Vector3(_backpackPoint.position.x, item.transform.position.y, _backpackPoint.transform.position.z),
+                flySpeed * Time.deltaTime);
+
+            Debug.Log("Up");
+
+            yield return null;
+        }
+
+        while (item.transform.position.y > _backpackPoint.position.y)
+        {
+            item.transform.Translate(Vector3.down * Time.deltaTime * flySpeed);
+
+            item.transform.position = Vector3.MoveTowards(item.transform.position,
+                new Vector3(_backpackPoint.position.x, item.transform.position.y, _backpackPoint.transform.position.z),
+                flySpeed * Time.deltaTime);
+
+            Debug.Log("Down");
+
+            yield return null;
+        }
+
+        item.OnPickedUp(this);
     }
 
     public void Restore(float value)

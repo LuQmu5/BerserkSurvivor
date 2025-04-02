@@ -6,7 +6,7 @@ public class GameBootstrapper : MonoBehaviour
     [SerializeField] private MainCameraController _mainCameraController;
     [SerializeField] private SpellBookView _spellBookView;
 
-    private const string CharactersPath = "Characters";
+    private const string CharactersPath = "Prefabs/Characters";
     private const string CharactersStatsPath = "StaticData/Stats";
 
     private void Awake()
