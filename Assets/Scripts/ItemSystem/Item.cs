@@ -1,11 +1,7 @@
 using UnityEngine;
 
-public class Item : MonoBehaviour
+public abstract class Item : MonoBehaviour
 {
-    [SerializeField] private string _itemName;
-
-    public string Name => _itemName;
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent(out IItemPicker itemPicker))
@@ -13,9 +9,7 @@ public class Item : MonoBehaviour
             itemPicker.PickUp(this);
         }
     }
-}
 
-public interface IItemPicker
-{
-    public void PickUp(Item item);
+    protected abstract void OnDropped();
+    public abstract void OnPickedUp(IItemPicker picker);
 }

@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using UnityEngine;
 using Zenject;
@@ -7,6 +8,7 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
     private const string HorizintalAxis = "Horizontal";
     private const string VerticalAxis = "Vertical";
 
+    [SerializeField] private Transform _backpackPoint;
 
     private PlayerInput _input;
     private CharacterStats _stats;
@@ -94,8 +96,22 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
 
     public void PickUp(Item item)
     {
-        print(item.Name);
-        item.gameObject.SetActive(false);
+        Vector3 controlPoint = (item.transform.position + _backpackPoint.position) / 2 + Vector3.up * 2f;
+
+        item.transform.DOPath(new Vector3[] { item.transform.position, controlPoint, _backpackPoint.position }, 0.7f, PathType.CatmullRom)
+            .SetEase(Ease.InOutSine)
+            .OnComplete(() => item.OnPickedUp(this));
+    }
+
+    public void Restore(float value)
+    {
+        CurrentHealth += value;
+
+        if (CurrentHealth > MaxHealth)
+            CurrentHealth = MaxHealth;
+
+        // event
+        Debug.Log("Healed");
     }
 }
 

@@ -35,4 +35,9 @@ public class Enemy : MonoBehaviour, IHealth
         if (CurrentHealth == 0)
             gameObject.SetActive(false);
     }
+
+    public void Restore(float value)
+    {
+        
+    }
 }

@@ -84,3 +84,8 @@ public class EarthQuake : Spell
         Debug.Log(ToString() + " creates a earth quake in a point of caster");
     }
 }
+
+public class SpellVFXView : MonoBehaviour
+{
+
+}

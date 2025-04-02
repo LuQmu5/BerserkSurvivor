@@ -70,4 +70,9 @@ public class BerserkController : MonoBehaviour, IHealth
     {
         return new Vector2(SimpleInput.GetAxis("Horizontal"), SimpleInput.GetAxis("Vertical"));
     }
+
+    public void Restore(float value)
+    {
+        throw new System.NotImplementedException();
+    }
 }
