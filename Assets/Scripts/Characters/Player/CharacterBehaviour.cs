@@ -98,27 +98,28 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
 
     private IEnumerator PickingUp(Item item)
     {
-        float baseDuration = 2f;
-        float finalSizeCoeff = 0.2f;
-        float minDistance = 0.2f;
+        float baseDuration = 1f;       
+        float finalSizeCoeff = 0.3f;      
+        float elapsedTime = 0f;        
 
-        float moveDuration = baseDuration;
         Vector3 originalScale = item.transform.localScale;
+        Vector3 startPos = item.transform.position;
 
-        while (Vector3.Distance(item.transform.position, _backpackPoint.transform.position) > minDistance)
+        while (elapsedTime < baseDuration)
         {
-            moveDuration -= (Time.deltaTime * Time.deltaTime) / baseDuration;
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / baseDuration;
+            float earlyBoost = Mathf.Clamp01(t * 1.5f);
+            float speedMultiplier = Mathf.Lerp(earlyBoost, Mathf.Pow(t, 2), t);
 
-            item.transform.DOMove(_backpackPoint.position, moveDuration)
-                        .SetEase(Ease.InExpo)
-                        .SetLoops(-1, LoopType.Restart)
-                        .OnUpdate(() => item.transform.DOMove(_backpackPoint.position, moveDuration));
-
-            item.transform.DOScale(originalScale * finalSizeCoeff, moveDuration)
-                          .SetEase(Ease.InExpo);
+            item.transform.position = Vector3.Lerp(startPos, _backpackPoint.position, speedMultiplier);
+            item.transform.localScale = Vector3.Lerp(originalScale, originalScale * finalSizeCoeff, t);
 
             yield return null;
         }
+
+        item.transform.position = _backpackPoint.position;
+        item.transform.localScale = originalScale * finalSizeCoeff;
 
         item.OnPickedUp(this);
     }

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 74299891379567325}
   - component: {fileID: 1872946163397328311}
   - component: {fileID: 9131602212820826956}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: HealthItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -107,7 +107,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2, y: 2, z: 2}
+  m_Size: {x: 3, y: 3, z: 3}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &9131602212820826956
 MonoBehaviour:
@@ -121,4 +121,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e551e3c43df8da74687268d217c988cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  jumpHeight: 0.5
+  jumpDuration: 0.3
+  rotationSpeed: 50
+  pulseScaleFactor: 1.2
+  pulseDuration: 1
   _restoringHealthValue: 10
