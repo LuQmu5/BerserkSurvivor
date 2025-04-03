@@ -48,14 +48,19 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
 
         // проверки на разные типы атак (с шифтом и контрол) и вызов разных методов, которые вызывают разные методы юзания спелла 
         if (_input.Combat.Attack.inProgress && _combatSystem.AttackOnCooldown == false)
+        {
             TryAttack();
+            Rotate(inputVector, toMouse: true);
+        }
         else
+        {
             Move(inputVector);
+            Rotate(inputVector, toMouse: false);
+        }
 
         if (_input.Combat.ActivateSpell.triggered)
             _combatSystem.TryActivateSpell();
 
-        Rotate(inputVector, toMouse: _input.Combat.Attack.inProgress && _combatSystem.AttackOnCooldown == false);
         _stats.TryGetCurrentValueOfStat(StatNames.AttackSpeed, out float attackSpeed);
         _view.SetAttackSpeedMultiplier(attackSpeed);
     }

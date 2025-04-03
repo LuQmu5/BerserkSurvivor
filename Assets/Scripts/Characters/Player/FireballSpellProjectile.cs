@@ -22,10 +22,7 @@ public class FireballSpellProjectile : SpellProjectile
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == HittableLayer)
-        {
-            Explode();
-        }
+        Explode();
     }
 
     private void Explode()
