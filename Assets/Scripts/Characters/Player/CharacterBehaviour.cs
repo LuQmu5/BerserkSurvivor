@@ -29,7 +29,7 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
 
         _view = new CharacterView(GetComponent<Animator>());
         _combatSystem = new CharacterCombatSystem(this, stats, spellBookView, _view);
-        _mover = new CharacterMover(GetComponent<CharacterController>(), 10, 10, this);
+        _mover = new CharacterMover(GetComponent<CharacterController>(), this, stats);
 
         MaxHealth = 10;
         CurrentHealth = MaxHealth;

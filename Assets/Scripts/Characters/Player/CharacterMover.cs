@@ -5,22 +5,22 @@ using UnityEngine;
 public class CharacterMover
 {
     private CharacterController _controller;
-    private float _movementSpeed = 5;
-    private float _rotationSpeed = 10;
     private Transform _transform;
-    private bool _moveIsFreezed;
     private ICoroutineRunner _coroutineRunner;
+    private CharacterStats _stats;
+
     private Coroutine _freezingMoveCoroutine;
+    private bool _moveIsFreezed;
+    private float _baseRotationSpeed = 10;
 
     public bool MoveIsFreezed => _moveIsFreezed;
 
-    public CharacterMover(CharacterController controller, float movementSpeed, float rotationSpeed, ICoroutineRunner coroutineRunner)
+    public CharacterMover(CharacterController controller, ICoroutineRunner coroutineRunner, CharacterStats stats)
     {
         _controller = controller;
-        _movementSpeed = movementSpeed;
-        _rotationSpeed = rotationSpeed;
         _transform = controller.transform;
         _coroutineRunner = coroutineRunner;
+        _stats = stats;
     }
 
     public bool TryMove(Vector3 inputVector, bool attackInProgress = false)
@@ -34,7 +34,8 @@ public class CharacterMover
         if (inputVector.sqrMagnitude < deadZone)
             return false;
 
-        _controller.Move(new Vector3(inputVector.x, 0, inputVector.y) * _movementSpeed * speedCoeff * Time.deltaTime);
+        _stats.TryGetCurrentValueOfStat(StatNames.MovementSpeed, out float movementSpeed);
+        _controller.Move(new Vector3(inputVector.x, 0, inputVector.y) * movementSpeed * speedCoeff * Time.deltaTime);
 
         return true;
     }
@@ -58,7 +59,7 @@ public class CharacterMover
         {
             Vector3 targetPoint = ray.GetPoint(hit);
             Quaternion targetRotation = Quaternion.LookRotation(targetPoint - _transform.position);
-            _transform.rotation = Quaternion.Slerp(_transform.rotation, targetRotation, Time.deltaTime * _rotationSpeed);
+            _transform.rotation = Quaternion.Slerp(_transform.rotation, targetRotation, Time.deltaTime * _baseRotationSpeed);
         }
     }
 

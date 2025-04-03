@@ -9,7 +9,8 @@ public enum StatNames
 {
     Agility = 0,
     AttackSpeed = 1,
-    AttackCooldown = 2
+    AttackCooldown = 2,
+    MovementSpeed = 3
 }
 
 public class CharacterStats
