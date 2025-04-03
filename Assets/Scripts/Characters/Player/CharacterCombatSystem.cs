@@ -7,7 +7,7 @@ public class CharacterCombatSystem
     private ICoroutineRunner _coroutineRunner;
     private float _currentAttackCooldown;
     private CharacterStats _characterStats;
-    private SpellCastingSystem _spellCastingSystem;
+    private CharacterSpellCastingSystem _spellCastingSystem;
     private SpellBookView _spellBookView;
     private ICharacterView _view;
 
@@ -16,11 +16,11 @@ public class CharacterCombatSystem
     public SpellData ActiveSpellData => _spellCastingSystem.CurrentActiveSpell.Data;
     public bool AttackOnCooldown => _attackCooldownRefreshingCoroutine != null;
 
-    public CharacterCombatSystem(ICoroutineRunner coroutineRunner, CharacterStats characterStats, SpellBookView spellBookView, ICharacterView view)
+    public CharacterCombatSystem(ICoroutineRunner coroutineRunner, CharacterStats characterStats, SpellBookView spellBookView, ICharacterView view, Transform transform, Transform castPoint)
     {
         _coroutineRunner = coroutineRunner;
         _characterStats = characterStats;
-        _spellCastingSystem = new SpellCastingSystem(coroutineRunner, spellBookView);
+        _spellCastingSystem = new CharacterSpellCastingSystem(coroutineRunner, spellBookView, transform, castPoint);
         _spellBookView = spellBookView;
         _view = view;
     }

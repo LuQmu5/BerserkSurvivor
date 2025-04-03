@@ -11,6 +11,7 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
     private const string VerticalAxis = "Vertical";
 
     [SerializeField] private Transform _backpackPoint;
+    [SerializeField] private Transform _castPoint;
 
     private PlayerInput _input;
     private CharacterStats _stats;
@@ -34,7 +35,7 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
         _stats = stats;
 
         _view = new CharacterView(GetComponent<Animator>());
-        _combatSystem = new CharacterCombatSystem(this, stats, spellBookView, _view);
+        _combatSystem = new CharacterCombatSystem(this, stats, spellBookView, _view, transform, _castPoint);
         _mover = new CharacterMover(GetComponent<CharacterController>(), this, stats);
 
         MaxHealth = 10;

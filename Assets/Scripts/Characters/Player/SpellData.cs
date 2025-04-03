@@ -8,4 +8,6 @@ public class SpellData : ScriptableObject
     [field: SerializeField] public Sprite Icon { get; private set; }
     [field: SerializeField] public MagicElementsPattern Pattern { get; private set; }
     [field: SerializeField] public AnimationNames CastAnimationName { get; private set; }
+    [field: SerializeField] public SpellProjectile ProjectilePrefab { get; private set; }
 }
+

@@ -10,7 +10,7 @@ public abstract class Spell
         Data = data;
     }
 
-    public abstract void Use();
+    public abstract void Use(ICaster caster);
 }
 
 public class FireballSpell : Spell
@@ -19,9 +19,10 @@ public class FireballSpell : Spell
     {
     }
 
-    public override void Use()
+    public override void Use(ICaster caster)
     {
-        Debug.Log(ToString() + " fire magic towards projectile with explosion damage in area in point of collision");
+        SpellProjectile fireball = UnityEngine.Object.Instantiate(Data.ProjectilePrefab); // factory
+        fireball.Init(caster);
     }
 }
 
@@ -31,7 +32,7 @@ public class FrostboltSpell : Spell
     {
     }
 
-    public override void Use()
+    public override void Use(ICaster caster)
     {
         Debug.Log(ToString() + "frost magic solo towards projectile with pierce");
     }
@@ -43,7 +44,7 @@ public class ArcaneMissileSpell : Spell
     {
     }
 
-    public override void Use()
+    public override void Use(ICaster caster)
     {
         Debug.Log(ToString() + " arcane magic auto-projectiles!");
     }
@@ -55,7 +56,7 @@ public class HealSpell : Spell
     {
     }
 
-    public override void Use()
+    public override void Use(ICaster caster)
     {
         Debug.Log(ToString() + " self heal with life magic!");
     }
@@ -67,7 +68,7 @@ public class TrailOfLifeSpell : Spell
     {
     }
 
-    public override void Use()
+    public override void Use(ICaster caster)
     {
         Debug.Log(ToString() + " creates the trail of life magic behind the character");
     }
@@ -79,13 +80,8 @@ public class EarthQuake : Spell
     {
     }
 
-    public override void Use()
+    public override void Use(ICaster caster)
     {
         Debug.Log(ToString() + " creates a earth quake in a point of caster");
     }
-}
-
-public class SpellVFXView : MonoBehaviour
-{
-
 }

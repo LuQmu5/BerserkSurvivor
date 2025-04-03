@@ -20,3 +20,4 @@ MonoBehaviour:
     <SecondSigil>k__BackingField: 4
     <ThirdSigil>k__BackingField: 8
   <CastAnimationName>k__BackingField: 4
+  <ProjectilePrefab>k__BackingField: {fileID: 1662016729746993329, guid: ac2836de825dd3c48a45842aed08f6b6, type: 3}

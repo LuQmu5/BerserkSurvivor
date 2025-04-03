@@ -17,7 +17,7 @@ public enum MagicElements
     Wind = 8
 }
 
-public class SpellCastingSystem
+public class CharacterSpellCastingSystem : ICaster
 {
     private const int MaxComboLength = 3;
 
@@ -28,9 +28,14 @@ public class SpellCastingSystem
     private int _currentSpellIndex;
 
     public Spell CurrentActiveSpell => _spellBook.CurrentActiveSpell;
+    public Transform Transform { get; }
+    public Transform CastPoint { get; }
 
-    public SpellCastingSystem(ICoroutineRunner coroutineRunner, SpellBookView spellBookView)
+    public CharacterSpellCastingSystem(ICoroutineRunner coroutineRunner, SpellBookView spellBookView, Transform transform, Transform castPoint)
     {
+        Transform = transform;
+        CastPoint = castPoint;
+
         _spellKeys = new Dictionary<KeyCode, MagicElements>()
         {
             [KeyCode.Z] = MagicElements.Arcane,
@@ -122,6 +127,6 @@ public class SpellCastingSystem
 
     public void Cast()
     {
-        CurrentActiveSpell.Use();
+        CurrentActiveSpell.Use(this);
     }
 }
