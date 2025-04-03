@@ -28,7 +28,7 @@ public class CharacterMover
         if (_moveIsFreezed)
             return false;
 
-        float speedCoeff = attackInProgress ? 0.4f : 1; // #test_values
+        float speedCoeff = attackInProgress ? 0.1f : 1; // #test_values
         float deadZone = 0.1f;
 
         if (inputVector.sqrMagnitude < deadZone)

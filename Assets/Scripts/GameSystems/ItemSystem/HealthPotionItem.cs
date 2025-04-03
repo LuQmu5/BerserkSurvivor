@@ -11,7 +11,7 @@ public class HealthPotionItem : Item
         {
             health.Restore(_restoringHealthValue);
         }
-
-        gameObject.SetActive(false);
+        
+        base.OnPickedUp(itemmPicker);
     }
 }

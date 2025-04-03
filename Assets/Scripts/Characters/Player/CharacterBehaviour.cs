@@ -1,9 +1,11 @@
 using DG.Tweening;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 using Zenject;
 
-public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IItemPicker
+// надо делить еще на более мелкие системы и классы
+public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IItemPicker, ILevelable
 {
     private const string HorizintalAxis = "Horizontal";
     private const string VerticalAxis = "Vertical";
@@ -19,6 +21,10 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
 
     public float MaxHealth { get; private set; }
     public float CurrentHealth { get; private set; }
+    public float MaxLevel { get; private set; } = 10;
+    public float CurrentLevel { get; private set; } = 1;
+    public float CurrentExpirience { get; private set; } = 0;
+    public float ExpirienceForNextLevel { get => CurrentLevel * 100; }
 
     public void Init(PlayerInput input, CharacterStats stats, SpellBookView spellBookView)
     {
@@ -134,6 +140,26 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
         // event
         Debug.Log("Healed");
     }
+
+    public void AddExpirience(float amount)
+    {
+        if (CurrentLevel == MaxLevel)
+            return;
+
+        CurrentExpirience += amount;
+
+        while (CurrentExpirience > ExpirienceForNextLevel)
+        {
+            CurrentLevel++;
+            CurrentExpirience = CurrentExpirience - ExpirienceForNextLevel;
+            OnLevelUp();
+        }
+    }
+
+    public void OnLevelUp()
+    {
+        Debug.Log("Current level: " + CurrentLevel);
+    }
 }
 
 public interface ICoroutineRunner
@@ -141,3 +167,4 @@ public interface ICoroutineRunner
     public Coroutine StartCoroutine(IEnumerator routineName);
     public void StopCoroutine(Coroutine coroutine);
 }
+

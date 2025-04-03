@@ -4,30 +4,58 @@ using Zenject.SpaceFighter;
 
 public abstract class Item : MonoBehaviour
 {
-    private Collider _collider;
+    [Header("Item Settings")]
+    [field: SerializeField] public ItemType Type { get; private set; }
 
-    public float jumpHeight = 0.5f;  // Высота подпрыгивания
-    public float jumpDuration = 0.3f; // Длительность подпрыгивания
-    public float rotationSpeed = 50f; // Скорость вращения
-    public float pulseScaleFactor = 1.2f; // Насколько увеличивается объект
-    public float pulseDuration = 1f; // Длительность пульсации
+    // Возможно как-то модульно сделать, чтобы закидывать сюда пресеты анимаций по названиям, в какой-нибудь массив разделенный по принципу в какой момент какую анимацию проигрывать
+    // и они применяется, либо просто отдельный View скрипт сделать и связать его с этим
+    [Space(20)]
+    [Header("Animation Settings")]
+    [SerializeField] private float _jumpHeight = 0.5f;  
+    [SerializeField] private float _jumpDuration = 0.3f; 
+    [SerializeField] private float _rotationSpeed = 50f; 
+    [SerializeField] private float _pulseScaleFactor = 1.2f; 
+    [SerializeField] private float _pulseDuration = 1f;
+
+    private Collider _collider;
+    private Vector3 _baseScale;
+    private Vector3 _baseRotation;
 
     private void Awake()
     {
         _collider = GetComponent<Collider>();
+
+        _baseScale = transform.localScale;
+        _baseRotation = transform.eulerAngles;
+    }
+
+    private void OnEnable()
+    {
+        transform.localScale = _baseScale;
+        transform.eulerAngles = _baseRotation;
+        _collider.enabled = true;
     }
 
     public virtual void OnDropped()
     {
-        transform.DOLocalMoveY(transform.position.y + jumpHeight, jumpDuration)
-         .SetEase(Ease.OutQuad)  // Плавное начало и конец
-         .OnComplete(() =>
-             transform.DOLocalMoveY(transform.position.y - jumpHeight, jumpDuration)
-                      .SetEase(Ease.InQuad)  // Плавное возвращение вниз
-         );
+        DoJump();
+        DoPulsarRotate();
+    }
 
-        transform.DORotate(new Vector3(0, 360, 0), 2f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetEase(Ease.Linear);
-        transform.DOScale(transform.localScale * 1.2f, 1f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutSine);
+    private void DoPulsarRotate()
+    {
+        transform.DORotate(new Vector3(0, 360, 0), _rotationSpeed / _pulseDuration, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetEase(Ease.Linear);
+        transform.DOScale(transform.localScale * _pulseScaleFactor, _pulseDuration).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutSine);
+    }
+
+    private void DoJump()
+    {
+        transform.DOLocalMoveY(transform.position.y + _jumpHeight, _jumpDuration)
+         .SetEase(Ease.OutQuad)
+         .OnComplete(() =>
+             transform.DOLocalMoveY(transform.position.y - _jumpHeight, _jumpDuration)
+                      .SetEase(Ease.InQuad)
+         );
     }
 
     private void OnTriggerEnter(Collider other)
@@ -39,5 +67,8 @@ public abstract class Item : MonoBehaviour
         }
     }
 
-    public abstract void OnPickedUp(IItemPicker picker);
+    public virtual void OnPickedUp(IItemPicker picker)
+    {
+        ItemFactory.Instance.ReturnItem(this);
+    }
 }

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1872946163397328311}
   - component: {fileID: 9131602212820826956}
   m_Layer: 8
-  m_Name: HealthItem
+  m_Name: HealthPotionItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
