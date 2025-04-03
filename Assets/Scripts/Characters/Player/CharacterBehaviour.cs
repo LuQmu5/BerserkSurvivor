@@ -12,7 +12,6 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
 
     private PlayerInput _input;
     private CharacterStats _stats;
-    private Animator _animator;
 
     private CharacterCombatSystem _combatSystem;
     private CharacterMover _mover;
@@ -23,8 +22,6 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
 
     public void Init(PlayerInput input, CharacterStats stats, SpellBookView spellBookView)
     {
-        print("construct");
-
         _input = input;
         _input.Enable();
 
@@ -101,30 +98,24 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
 
     private IEnumerator PickingUp(Item item)
     {
-        float flySpeed = 1;
+        float baseDuration = 2f;
+        float finalSizeCoeff = 0.2f;
+        float minDistance = 0.2f;
 
-        while (item.transform.position.y < _backpackPoint.position.y)
+        float moveDuration = baseDuration;
+        Vector3 originalScale = item.transform.localScale;
+
+        while (Vector3.Distance(item.transform.position, _backpackPoint.transform.position) > minDistance)
         {
-            item.transform.Translate(Vector3.up * Time.deltaTime * flySpeed);
+            moveDuration -= (Time.deltaTime * Time.deltaTime) / baseDuration;
 
-            item.transform.position = Vector3.MoveTowards(item.transform.position,
-                new Vector3(_backpackPoint.position.x, item.transform.position.y, _backpackPoint.transform.position.z),
-                flySpeed * Time.deltaTime);
+            item.transform.DOMove(_backpackPoint.position, moveDuration)
+                        .SetEase(Ease.InExpo)
+                        .SetLoops(-1, LoopType.Restart)
+                        .OnUpdate(() => item.transform.DOMove(_backpackPoint.position, moveDuration));
 
-            Debug.Log("Up");
-
-            yield return null;
-        }
-
-        while (item.transform.position.y > _backpackPoint.position.y)
-        {
-            item.transform.Translate(Vector3.down * Time.deltaTime * flySpeed);
-
-            item.transform.position = Vector3.MoveTowards(item.transform.position,
-                new Vector3(_backpackPoint.position.x, item.transform.position.y, _backpackPoint.transform.position.z),
-                flySpeed * Time.deltaTime);
-
-            Debug.Log("Down");
+            item.transform.DOScale(originalScale * finalSizeCoeff, moveDuration)
+                          .SetEase(Ease.InExpo);
 
             yield return null;
         }

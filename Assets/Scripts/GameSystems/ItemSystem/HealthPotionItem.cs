@@ -12,7 +12,6 @@ public class HealthPotionItem : Item
 
     protected override void OnDropped()
     {
-        return;
         transform.DORotate(new Vector3(0, 360, 0), 2f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetEase(Ease.Linear);
         transform.DOScale(transform.localScale * 1.2f, 1f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutSine);
     }
