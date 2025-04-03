@@ -36,7 +36,7 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
 
         _view = new CharacterView(GetComponent<Animator>());
         _combatSystem = new CharacterCombatSystem(this, stats, spellBookView, _view, transform, _castPoint);
-        _mover = new CharacterMover(GetComponent<CharacterController>(), this, stats);
+        _mover = new CharacterMover(GetComponent<CharacterController>(), stats);
 
         MaxHealth = 10;
         CurrentHealth = MaxHealth;
@@ -45,17 +45,16 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
     private void Update()
     {
         Vector3 inputVector = Camera.main.transform.TransformDirection(GetInputAxis());
+        Rotate(inputVector, toMouse: _input.Combat.Attack.inProgress);
 
         // проверки на разные типы атак (с шифтом и контрол) и вызов разных методов, которые вызывают разные методы юзания спелла 
         if (_input.Combat.Attack.inProgress && _combatSystem.AttackOnCooldown == false)
         {
             TryAttack();
-            Rotate(inputVector, toMouse: true);
         }
         else
         {
             Move(inputVector);
-            Rotate(inputVector, toMouse: false);
         }
 
         if (_input.Combat.ActivateSpell.triggered)

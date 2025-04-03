@@ -6,20 +6,16 @@ public class CharacterMover
 {
     private CharacterController _controller;
     private Transform _transform;
-    private ICoroutineRunner _coroutineRunner;
     private CharacterStats _stats;
-
-    private Coroutine _freezingMoveCoroutine;
     private bool _moveIsFreezed;
     private float _baseRotationSpeed = 10;
 
     public bool MoveIsFreezed => _moveIsFreezed;
 
-    public CharacterMover(CharacterController controller, ICoroutineRunner coroutineRunner, CharacterStats stats)
+    public CharacterMover(CharacterController controller, CharacterStats stats)
     {
         _controller = controller;
         _transform = controller.transform;
-        _coroutineRunner = coroutineRunner;
         _stats = stats;
     }
 
@@ -61,24 +57,6 @@ public class CharacterMover
             Quaternion targetRotation = Quaternion.LookRotation(targetPoint - _transform.position);
             _transform.rotation = Quaternion.Slerp(_transform.rotation, targetRotation, Time.deltaTime * _baseRotationSpeed);
         }
-    }
-
-    public void FreezeMovementFor(float seconds)
-    {
-        _moveIsFreezed = true;
-
-        if (_freezingMoveCoroutine != null)
-            _coroutineRunner.StopCoroutine(_freezingMoveCoroutine);
-
-        _freezingMoveCoroutine = _coroutineRunner.StartCoroutine(FreezingMovement(seconds));
-    }
-
-    private IEnumerator FreezingMovement(float seconds)
-    {
-        yield return new WaitForSeconds(seconds);
-
-        _moveIsFreezed = false;
-        _freezingMoveCoroutine = null;
     }
 
     public void Rotate(Vector3 inputVector, bool toMouse)
