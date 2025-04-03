@@ -90,7 +90,9 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
 
     private void TryAttack()
     {
-        _combatSystem.TryStartAttackPerform();
+        if (_combatSystem.TryStartAttackPerform())
+            _mover.InstaRotateToMouse();
+
         _view.SetRunningState(false);
     }
 

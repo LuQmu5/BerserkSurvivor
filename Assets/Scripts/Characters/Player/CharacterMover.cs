@@ -46,7 +46,7 @@ public class CharacterMover
         _transform.forward = point;
     }
 
-    public void RotateToMouse()
+    public void RotateToMouse(bool isInstantly = false)
     {
         Plane playerPlane = new Plane(Vector3.up, _transform.position);
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -55,7 +55,8 @@ public class CharacterMover
         {
             Vector3 targetPoint = ray.GetPoint(hit);
             Quaternion targetRotation = Quaternion.LookRotation(targetPoint - _transform.position);
-            _transform.rotation = Quaternion.Slerp(_transform.rotation, targetRotation, Time.deltaTime * _baseRotationSpeed);
+            float multiplier = isInstantly ? 100 : 1;
+            _transform.rotation = Quaternion.Slerp(_transform.rotation, targetRotation, Time.deltaTime * _baseRotationSpeed * multiplier);
         }
     }
 
@@ -69,5 +70,10 @@ public class CharacterMover
         {
             RotateToPoint(inputVector);
         }
+    }
+
+    public void InstaRotateToMouse()
+    {
+        RotateToMouse(isInstantly: true);
     }
 }
