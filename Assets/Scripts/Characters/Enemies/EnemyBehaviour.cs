@@ -3,25 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Enemy : MonoBehaviour, IHealth
+public class EnemyBehaviour : MonoBehaviour, IHealth
 {
-    [SerializeField] private Transform _player;
     [SerializeField] private NavMeshAgent _agent;
-    [SerializeField] private BloodVFX _bloodVFX;
+    [SerializeField] private CharacterStats _stats;
 
+    [field: SerializeField] public EnemyType Type { get; private set; }
     [field: SerializeField] public float MaxHealth { get; private set; } = 100;
     [field: SerializeField] public float CurrentHealth { get; private set; }
 
-    private void Start()
+    private Transform _player;
+
+    public void Init(Transform player)
     {
-        CurrentHealth = MaxHealth;
+        _player = player;
+        _stats.TryGetCurrentValueOfStat(StatNames.MaxHealth, out float maxHealth);
+        MaxHealth = maxHealth;
+        CurrentHealth = maxHealth;
+        _agent = GetComponent<NavMeshAgent>();
     }
 
     private void Update()
     {
         if (_player == null)
         {
-            _player = FindObjectOfType<CharacterBehaviour>().transform;
             return;
         }
 
@@ -31,9 +36,6 @@ public class Enemy : MonoBehaviour, IHealth
     public void ApplyDamage(float amount)
     {
         CurrentHealth -= amount;
-        print(CurrentHealth);
-
-        Instantiate(_bloodVFX, transform.RandomOffset(0.5f, 1, 0.5f), Quaternion.identity);
 
         if (CurrentHealth < 0)
             CurrentHealth = 0;

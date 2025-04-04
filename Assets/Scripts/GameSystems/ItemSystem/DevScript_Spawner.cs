@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class TS_ItemSpawner : MonoBehaviour
+public class DevScript_Spawner : MonoBehaviour
 {
     public float spawnMinRadius = 5f; // Минимальное расстояние от игрока
     public float spawnMaxRadius = 10f; // Максимальное расстояние от игрока
