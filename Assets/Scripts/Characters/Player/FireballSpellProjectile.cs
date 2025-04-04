@@ -11,6 +11,7 @@ public class FireballSpellProjectile : SpellProjectile
     private float _speed = 1;
     private float _damage = 1; // #config
     private float _explosionRadius = 2; // #config
+    private float _lifeTime = 2;
     private Vector3 _baseScale;
 
     private void Start()
@@ -26,13 +27,14 @@ public class FireballSpellProjectile : SpellProjectile
         gameObject.SetActive(true);
         transform.localScale = _baseScale;
 
+        _lifeTime = 2;
+
         Creating();
     }
 
     private void Creating()
     {
         float spawnDuration = 0.2f;
-        float liveTime = 2f;
         transform.localScale /= 2;
 
         transform.localScale = Vector3.zero;
@@ -42,8 +44,6 @@ public class FireballSpellProjectile : SpellProjectile
               {
                   Fly();
               });
-
-        Destroy(gameObject, liveTime);
     }
 
     public void Fly()
@@ -55,6 +55,14 @@ public class FireballSpellProjectile : SpellProjectile
                          .SetEase(Ease.InOutQuad)
                          .OnComplete(() =>
                          {
+                             _lifeTime -= Time.deltaTime;
+
+                             if (_lifeTime <= 0)
+                             {
+                                 gameObject.SetActive(false);
+                                 DOTween.Kill(gameObject);
+                             }
+
                              transform.DOMove(transform.position + _direction * _speed * distance, distance / _speed)
                                       .SetEase(Ease.OutExpo);
                          });
@@ -85,9 +93,7 @@ public class FireballSpellProjectile : SpellProjectile
             health.ApplyDamage(_damage);
         }
 
-        Debug.Log($"Babah na {colliders.Length} units");
-
         DOTween.Kill(gameObject);
-        Destroy(gameObject); // factory
+        gameObject.SetActive(false);
     }
 }

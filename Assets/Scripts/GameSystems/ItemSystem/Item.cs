@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 using Zenject.SpaceFighter;
 
-public abstract class Item : MonoBehaviour, ITypeable
+public abstract class Item : MonoBehaviour, ITypeable, IPoolable
 {
     [Header("Item Settings")]
     [field: SerializeField] public ItemType Type { get; private set; }
@@ -23,6 +23,8 @@ public abstract class Item : MonoBehaviour, ITypeable
     private Collider _collider;
     private Vector3 _baseScale;
     private Vector3 _baseRotation;
+
+    public event Action<IPoolable> OnDisableEvent;
 
     private void Awake()
     {
@@ -45,6 +47,7 @@ public abstract class Item : MonoBehaviour, ITypeable
     private void OnDisable()
     {
         DOTween.Kill(gameObject);
+        OnDisableEvent?.Invoke(this);
     }
 
     public virtual void OnDropped()
@@ -80,6 +83,6 @@ public abstract class Item : MonoBehaviour, ITypeable
 
     public virtual void OnPickedUp(IItemPicker picker)
     {
-        ItemFactory.Instance.ReturnItem(this);
+        gameObject.SetActive(false);
     }
 }

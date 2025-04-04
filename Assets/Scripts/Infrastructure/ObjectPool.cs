@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class ObjectPool<T> where T : Component
+public class ObjectPool<T> where T : Component, IPoolable
 {
     private Stack<T> _pool = new Stack<T>();
     private Transform _parentTransform;
@@ -13,22 +13,28 @@ public class ObjectPool<T> where T : Component
 
     public T GetObject(T prefab)
     {
+        T obj;
+
         if (_pool.Count > 0)
         {
-            T obj = _pool.Pop();
+            obj = _pool.Pop();
             obj.gameObject.SetActive(true);
-            return obj;
         }
         else
         {
-            T obj = Object.Instantiate(prefab, _parentTransform);
-            return obj;
+            obj = UnityEngine.Object.Instantiate(prefab, _parentTransform);
+            obj.OnDisableEvent += ReturnObject; // Подписываемся на событие отключения
         }
+
+        return obj;
     }
 
-    public void ReturnObject(T obj)
+    private void ReturnObject(IPoolable item)
     {
-        obj.gameObject.SetActive(false);
-        _pool.Push(obj);
+        if (item is T obj)
+        {
+            obj.gameObject.SetActive(false);
+            _pool.Push(obj);
+        }
     }
 }

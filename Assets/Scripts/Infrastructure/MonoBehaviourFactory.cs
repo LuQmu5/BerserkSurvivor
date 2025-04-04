@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MonoBehaviourFactory<T> : IFactory<T> where T : Component
+public class MonoBehaviourFactory<T> : IFactory<T> where T : Component, IPoolable
 {
     private readonly Dictionary<Enum, T> _itemPrefabs = new Dictionary<Enum, T>();
     private Dictionary<Enum, ObjectPool<T>> _pools = new Dictionary<Enum, ObjectPool<T>>();
@@ -16,12 +16,8 @@ public class MonoBehaviourFactory<T> : IFactory<T> where T : Component
 
         foreach (T item in itemPrefabsList)
         {
-            Debug.Log(item.name);
-
             if (item is ITypeable typeable)
             {
-
-                Debug.Log("If for this name");
                 _itemPrefabs[typeable.ObjType] = item;
                 _pools[typeable.ObjType] = new ObjectPool<T>(parent);
             }
@@ -39,14 +35,6 @@ public class MonoBehaviourFactory<T> : IFactory<T> where T : Component
         {
             Debug.LogWarning($"Prefab for item type {type} not found!");
             return null;
-        }
-    }
-
-    public void ReturnItem(T item)
-    {
-        if (item is ITypeable typeable && _pools.ContainsKey(typeable.ObjType))
-        {
-            _pools[typeable.ObjType].ReturnObject(item);
         }
     }
 }

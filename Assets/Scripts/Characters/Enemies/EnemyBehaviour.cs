@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyBehaviour : MonoBehaviour, IHealth, ITypeable
+public class EnemyBehaviour : MonoBehaviour, IHealth, ITypeable, IPoolable
 {
     [SerializeField] private NavMeshAgent _agent;
     [SerializeField] private StatsData _statsData;
@@ -17,6 +17,8 @@ public class EnemyBehaviour : MonoBehaviour, IHealth, ITypeable
 
     private Transform _player;
     private CharacterStats _stats;
+
+    public event Action<IPoolable> OnDisableEvent;
 
     public void Init(Transform player, Vector3 position)
     {
@@ -42,6 +44,11 @@ public class EnemyBehaviour : MonoBehaviour, IHealth, ITypeable
         }
 
         _agent.SetDestination(_player.position);
+    }
+
+    private void OnDisable()
+    {
+        OnDisableEvent?.Invoke(this);
     }
 
     public void ApplyDamage(float amount)

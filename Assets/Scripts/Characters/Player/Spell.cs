@@ -21,7 +21,7 @@ public class FireballSpell : Spell
 
     public override void Use(ICaster caster)
     {
-        SpellProjectile fireball = UnityEngine.Object.Instantiate(Data.ProjectilePrefab); // factory
+        SpellProjectile fireball = ProjectileFactory.Instance.GetItem(ProjectileType.Fireball);
         fireball.Init(caster);
     }
 }
