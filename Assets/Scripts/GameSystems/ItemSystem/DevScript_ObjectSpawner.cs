@@ -1,8 +1,19 @@
 ﻿using UnityEngine;
+using Zenject;
 using static UnityEditor.Progress;
 
 public class DevScript_ObjectSpawner : MonoBehaviour
 {
+    private EnemyFactory _enemyFactory;
+    private ItemFactory _itemFactory;
+
+    [Inject]
+    public void Construct(EnemyFactory enemyFactory, ItemFactory itemFactory)
+    {
+        _enemyFactory = enemyFactory;
+        _itemFactory = itemFactory;
+    }
+
     private void Update()
     {
         SpawnEntitiesCheck();
@@ -13,12 +24,12 @@ public class DevScript_ObjectSpawner : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            SpawnItems(ItemFactory.Instance, Random.Range(5, 25));
+            SpawnItems(_itemFactory, Random.Range(5, 25));
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha2)) 
         {
-            SpawnItems(EnemyFactory.Instance, 1);
+            SpawnItems(_enemyFactory, 1);
         }
     }
 

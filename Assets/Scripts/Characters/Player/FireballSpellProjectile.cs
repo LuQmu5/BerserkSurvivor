@@ -1,6 +1,5 @@
 ﻿using DG.Tweening;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -8,15 +7,18 @@ public class FireballSpellProjectile : SpellProjectile
 {
     private ICaster _caster;
     private Vector3 _direction;
-    private float _speed = 1;
-    private float _damage = 1; // #config
-    private float _explosionRadius = 2; // #config
-    private float _lifeTime = 2;
+    private float _speed = 10f; // Скорость полета фаербола
+    private float _damage = 1f; // Урон
+    private float _explosionRadius = 2f; // Радиус взрыва
+    private float _lifeTime = 2f; // Время жизни фаербола
     private Vector3 _baseScale;
+
+    private Rigidbody _rigidbody; // Для физического движения
 
     private void Start()
     {
         _baseScale = transform.localScale;
+        _rigidbody = GetComponent<Rigidbody>(); // Инициализация Rigidbody
     }
 
     public override void Init(ICaster caster)
@@ -24,10 +26,11 @@ public class FireballSpellProjectile : SpellProjectile
         _caster = caster;
         _direction = caster.Transform.forward;
         transform.position = _caster.CastPoint.position;
+
         gameObject.SetActive(true);
         transform.localScale = _baseScale;
 
-        _lifeTime = 2;
+        _lifeTime = 2f;
 
         Creating();
     }
@@ -46,26 +49,27 @@ public class FireballSpellProjectile : SpellProjectile
               });
     }
 
+    // Запуск полета фаербола
     public void Fly()
     {
-        float moveDelay = 0.2f;
-        float distance = 50f;
+        // Даем начальный импульс фаерболу через Rigidbody
+        _rigidbody.velocity = _direction * _speed;
 
-        transform.DOMove(transform.position + _direction * _speed, moveDelay) // Маленький рывок для "заряда"
-                         .SetEase(Ease.InOutQuad)
-                         .OnComplete(() =>
-                         {
-                             _lifeTime -= Time.deltaTime;
+        // Запускаем таймер жизни
+        StartCoroutine(LifeTimeCoroutine());
+    }
 
-                             if (_lifeTime <= 0)
-                             {
-                                 gameObject.SetActive(false);
-                                 DOTween.Kill(gameObject);
-                             }
+    // Coroutine для отслеживания времени жизни
+    private System.Collections.IEnumerator LifeTimeCoroutine()
+    {
+        while (_lifeTime > 0)
+        {
+            _lifeTime -= Time.deltaTime;
+            yield return null;
+        }
 
-                             transform.DOMove(transform.position + _direction * _speed * distance, distance / _speed)
-                                      .SetEase(Ease.OutExpo);
-                         });
+        DOTween.Kill(gameObject, true);
+        gameObject.SetActive(false);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -78,6 +82,7 @@ public class FireballSpellProjectile : SpellProjectile
 
     private void Explode()
     {
+        // Радиус взрыва
         Collider[] colliders = Physics.OverlapSphere(transform.position, _explosionRadius);
         IHealth[] healthObjects = colliders
             .Select(c => c.GetComponent<IHealth>())
@@ -93,7 +98,17 @@ public class FireballSpellProjectile : SpellProjectile
             health.ApplyDamage(_damage);
         }
 
-        DOTween.Kill(gameObject);
+        DOTween.Kill(gameObject, true);
         gameObject.SetActive(false);
+    }
+
+    // Этот метод будет сбрасывать скорость Rigidbody при возврате в пул
+    public void ResetRigidbody()
+    {
+        if (_rigidbody != null)
+        {
+            _rigidbody.velocity = Vector3.zero;
+            _rigidbody.angularVelocity = Vector3.zero; // Если требуется сбросить угловую скорость
+        }
     }
 }

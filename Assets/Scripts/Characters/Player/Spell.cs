@@ -5,9 +5,12 @@ public abstract class Spell
 {
     public SpellData Data { get; private set; }
 
-    public Spell(SpellData data)
+    protected ProjectileFactory Factory;
+
+    public Spell(SpellData data, ProjectileFactory projectileFactory)
     {
         Data = data;
+        Factory = projectileFactory;
     }
 
     public abstract void Use(ICaster caster);
@@ -15,20 +18,20 @@ public abstract class Spell
 
 public class FireballSpell : Spell
 {
-    public FireballSpell(SpellData data) : base(data)
+    public FireballSpell(SpellData data, ProjectileFactory projectileFactory) : base(data, projectileFactory)
     {
     }
 
     public override void Use(ICaster caster)
     {
-        SpellProjectile fireball = ProjectileFactory.Instance.GetItem(ProjectileType.Fireball);
+        SpellProjectile fireball = Factory.GetItem(ProjectileType.Fireball);
         fireball.Init(caster);
     }
 }
 
 public class FrostboltSpell : Spell
 {
-    public FrostboltSpell(SpellData data) : base(data)
+    public FrostboltSpell(SpellData data, ProjectileFactory projectileFactory) : base(data, projectileFactory)
     {
     }
 
@@ -40,7 +43,7 @@ public class FrostboltSpell : Spell
 
 public class ArcaneMissileSpell : Spell
 {
-    public ArcaneMissileSpell(SpellData data) : base(data)
+    public ArcaneMissileSpell(SpellData data, ProjectileFactory projectileFactory) : base(data, projectileFactory)
     {
     }
 
@@ -52,7 +55,7 @@ public class ArcaneMissileSpell : Spell
 
 public class HealSpell : Spell
 {
-    public HealSpell(SpellData data) : base(data)
+    public HealSpell(SpellData data, ProjectileFactory projectileFactory) : base(data, projectileFactory)
     {
     }
 
@@ -64,7 +67,7 @@ public class HealSpell : Spell
 
 public class TrailOfLifeSpell : Spell
 {
-    public TrailOfLifeSpell(SpellData data) : base(data)
+    public TrailOfLifeSpell(SpellData data, ProjectileFactory projectileFactory) : base(data, projectileFactory)
     {
     }
 
@@ -76,7 +79,7 @@ public class TrailOfLifeSpell : Spell
 
 public class EarthQuake : Spell
 {
-    public EarthQuake(SpellData data) : base(data)
+    public EarthQuake(SpellData data, ProjectileFactory projectileFactory) : base(data, projectileFactory)
     {
     }
 

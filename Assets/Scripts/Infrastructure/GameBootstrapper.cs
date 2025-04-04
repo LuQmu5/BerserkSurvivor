@@ -1,4 +1,5 @@
 using UnityEngine;
+using Zenject;
 
 public class GameBootstrapper : MonoBehaviour
 {
@@ -9,7 +10,8 @@ public class GameBootstrapper : MonoBehaviour
 
     private const string CharactersPath = "Prefabs/Characters";
 
-    private void Awake()
+    [Inject]
+    public void Construct(ProjectileFactory projectileFactory)
     {
         int mageCharacterIndex = 0;
         
@@ -18,7 +20,7 @@ public class GameBootstrapper : MonoBehaviour
         PlayerInput input = new PlayerInput();
 
         CharacterBehaviour mage = Instantiate(characters[mageCharacterIndex], _levelSpawnPoint.position, Quaternion.identity);
-        mage.Init(input, _spellBookView, _characterStatsData);
+        mage.Init(input, _spellBookView, _characterStatsData, projectileFactory);
         _mainCameraController.Init(mage.transform);
     }
 }

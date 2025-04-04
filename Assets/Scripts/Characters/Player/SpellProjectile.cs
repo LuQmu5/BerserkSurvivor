@@ -11,6 +11,7 @@ public abstract class SpellProjectile : MonoBehaviour, ITypeable, IPoolable
 
     public abstract void Init(ICaster caster);
 
+
     private void OnDisable()
     {
         OnDisableEvent?.Invoke(this);

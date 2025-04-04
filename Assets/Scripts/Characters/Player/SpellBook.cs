@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Zenject;
 
 public enum SpellNames
 {
@@ -20,7 +21,7 @@ public class SpellBook
 
     public Spell CurrentActiveSpell { get; private set; } = null;
 
-    public SpellBook()
+    public SpellBook(ProjectileFactory factory)
     {
         SpellData[] spellsData = Resources.LoadAll<SpellData>(SpellsPath);
 
@@ -33,12 +34,12 @@ public class SpellBook
 
         _spells = new List<Spell>()
         {
-            new FireballSpell(fireballData),
-            new FrostboltSpell(frostboltData),
-            new ArcaneMissileSpell(arcaneMissileData),
-            new HealSpell(healData),
-            new TrailOfLifeSpell(trailOfLifeData),
-            new EarthQuake(earthQuakeData),
+            new FireballSpell(fireballData, factory),
+            new FrostboltSpell(frostboltData, factory),
+            new ArcaneMissileSpell(arcaneMissileData, factory),
+            new HealSpell(healData, factory),
+            new TrailOfLifeSpell(trailOfLifeData, factory),
+            new EarthQuake(earthQuakeData, factory),
         };
 
         CurrentActiveSpell = null;

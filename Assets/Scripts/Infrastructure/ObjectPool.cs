@@ -6,11 +6,6 @@ public class ObjectPool<T> where T : Component, IPoolable
     private Stack<T> _pool = new Stack<T>();
     private Transform _parentTransform;
 
-    public ObjectPool(Transform parent)
-    {
-        _parentTransform = parent;
-    }
-
     public T GetObject(T prefab)
     {
         T obj;
@@ -22,7 +17,7 @@ public class ObjectPool<T> where T : Component, IPoolable
         }
         else
         {
-            obj = UnityEngine.Object.Instantiate(prefab, _parentTransform);
+            obj = UnityEngine.Object.Instantiate(prefab);
             obj.OnDisableEvent += ReturnObject; // Подписываемся на событие отключения
         }
 
@@ -33,7 +28,6 @@ public class ObjectPool<T> where T : Component, IPoolable
     {
         if (item is T obj)
         {
-            obj.gameObject.SetActive(false);
             _pool.Push(obj);
         }
     }

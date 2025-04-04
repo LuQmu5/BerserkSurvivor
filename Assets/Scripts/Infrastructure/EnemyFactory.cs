@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class EnemyFactory : MonoBehaviourFactory<EnemyBehaviour>
 {
-    public EnemyFactory(EnemyBehaviour[] itemPrefabsList, Transform parent) : base(itemPrefabsList, parent)
+    public EnemyFactory(EnemyBehaviour[] itemPrefabsList) : base(itemPrefabsList)
     {
     }
 }

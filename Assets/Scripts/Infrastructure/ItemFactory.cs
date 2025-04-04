@@ -3,8 +3,8 @@ using Zenject;
 
 public class ItemFactory : MonoBehaviourFactory<Item>
 {
-    public ItemFactory(Item[] itemPrefabsList, Transform parent)
-        : base(itemPrefabsList, parent)
+    public ItemFactory(Item[] itemPrefabsList)
+        : base(itemPrefabsList)
     {
     }
 }

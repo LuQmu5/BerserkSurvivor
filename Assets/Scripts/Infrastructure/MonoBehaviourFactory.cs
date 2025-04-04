@@ -8,18 +8,14 @@ public class MonoBehaviourFactory<T> : IFactory<T> where T : Component, IPoolabl
     private readonly Dictionary<Enum, T> _itemPrefabs = new Dictionary<Enum, T>();
     private Dictionary<Enum, ObjectPool<T>> _pools = new Dictionary<Enum, ObjectPool<T>>();
 
-    public static MonoBehaviourFactory<T> Instance { get; private set; }
-
-    public MonoBehaviourFactory(T[] itemPrefabsList, Transform parent)
+    public MonoBehaviourFactory(T[] itemPrefabsList)
     {
-        Instance = this;
-
         foreach (T item in itemPrefabsList)
         {
             if (item is ITypeable typeable)
             {
                 _itemPrefabs[typeable.ObjType] = item;
-                _pools[typeable.ObjType] = new ObjectPool<T>(parent);
+                _pools[typeable.ObjType] = new ObjectPool<T>();
             }
         }
     }

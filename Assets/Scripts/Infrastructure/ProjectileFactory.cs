@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ProjectileFactory : MonoBehaviourFactory<SpellProjectile>
 {
-    public ProjectileFactory(SpellProjectile[] projectilesPrefabsList, Transform parent) : base(projectilesPrefabsList, parent)
+    public ProjectileFactory(SpellProjectile[] projectilesPrefabsList) : base(projectilesPrefabsList)
     {
     }
 }

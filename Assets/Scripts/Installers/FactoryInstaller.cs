@@ -2,15 +2,11 @@
 using UnityEngine;
 using Zenject;
 
-public class ServiceInstaller : MonoInstaller
+public class FactoryInstaller : MonoInstaller
 {
     private const string ItemsPath = "Prefabs/Items";
     private const string EnemiesPath = "Prefabs/Enemies";
     private const string ProjectilesPath = "Prefabs/Spells/Projectiles";
-
-    [SerializeField] private Transform _itemsParent;
-    [SerializeField] private Transform _enemiesParent;
-    [SerializeField] private Transform _projectilesParent;
 
     public override void InstallBindings()
     {
@@ -23,7 +19,7 @@ public class ServiceInstaller : MonoInstaller
     {
         SpellProjectile[] spellProjectiles = Resources.LoadAll<SpellProjectile>(ProjectilesPath);
 
-        ProjectileFactory projectileFactory = new ProjectileFactory(spellProjectiles, _projectilesParent);
+        ProjectileFactory projectileFactory = new ProjectileFactory(spellProjectiles);
         Container.BindInstance(projectileFactory).AsSingle().NonLazy();
     }
 
@@ -31,7 +27,7 @@ public class ServiceInstaller : MonoInstaller
     {
         EnemyBehaviour[] enemiesPrefabs = Resources.LoadAll<EnemyBehaviour>(EnemiesPath);
 
-        EnemyFactory enemiesFactory = new EnemyFactory(enemiesPrefabs, _enemiesParent);
+        EnemyFactory enemiesFactory = new EnemyFactory(enemiesPrefabs);
         Container.BindInstance(enemiesFactory).AsSingle().NonLazy();
     }
 
@@ -39,7 +35,7 @@ public class ServiceInstaller : MonoInstaller
     {
         Item[] itemPrefabs = Resources.LoadAll<Item>(ItemsPath);
 
-        ItemFactory itemFactory = new ItemFactory(itemPrefabs, _itemsParent);
+        ItemFactory itemFactory = new ItemFactory(itemPrefabs);
         Container.BindInstance(itemFactory).AsSingle().NonLazy();
     }
 }
