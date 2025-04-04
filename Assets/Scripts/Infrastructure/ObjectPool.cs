@@ -3,35 +3,32 @@ using UnityEngine;
 
 public class ObjectPool<T> where T : Component
 {
-    private Stack<T> _pool = new Stack<T>();  // Стек для объектов
-    private Transform _parentTransform;       // Родитель для объектов в пуле
+    private Stack<T> _pool = new Stack<T>();
+    private Transform _parentTransform;
 
     public ObjectPool(Transform parent)
     {
         _parentTransform = parent;
     }
 
-    // Получаем объект из пула или создаем новый
     public T GetObject(T prefab)
     {
         if (_pool.Count > 0)
         {
             T obj = _pool.Pop();
-            obj.gameObject.SetActive(true);  // Активируем объект
+            obj.gameObject.SetActive(true);
             return obj;
         }
         else
         {
-            // Создаем новый объект, если пул пуст
             T obj = Object.Instantiate(prefab, _parentTransform);
             return obj;
         }
     }
 
-    // Возвращаем объект в пул
     public void ReturnObject(T obj)
     {
-        obj.gameObject.SetActive(false);  // Деактивируем объект
-        _pool.Push(obj);  // Добавляем в пул
+        obj.gameObject.SetActive(false);
+        _pool.Push(obj);
     }
 }

@@ -27,16 +27,16 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
     public float CurrentExpirience { get; private set; } = 0;
     public float ExpirienceForNextLevel { get => CurrentLevel * 100; }
 
-    public void Init(PlayerInput input, CharacterStats stats, SpellBookView spellBookView)
+    public void Init(PlayerInput input, SpellBookView spellBookView, StatsData data)
     {
         _input = input;
         _input.Enable();
 
-        _stats = stats;
+        _stats = new CharacterStats(data);
 
         _view = new CharacterView(GetComponent<Animator>());
-        _combatSystem = new CharacterCombatSystem(this, stats, spellBookView, _view, transform, _castPoint);
-        _mover = new CharacterMover(GetComponent<CharacterController>(), stats);
+        _combatSystem = new CharacterCombatSystem(this, _stats, spellBookView, _view, transform, _castPoint);
+        _mover = new CharacterMover(GetComponent<CharacterController>(), _stats);
 
         _stats.TryGetCurrentValueOfStat(StatNames.MaxHealth, out float maxHealth);
         MaxHealth = maxHealth;

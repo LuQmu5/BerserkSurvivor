@@ -11683,9 +11683,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96ac058038f886547b96e38676b49b47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _player: {fileID: 0}
   _agent: {fileID: 2608360159917457941}
-  _bloodVFX: {fileID: 7012628438663580925, guid: 23ecd1d3cca7ed34fa5a4f0846d3b106, type: 3}
+  _statsData: {fileID: 11400000, guid: 136ced0c7fe19a54f99c10ccaed3e1a9, type: 2}
+  <Type>k__BackingField: 0
   <MaxHealth>k__BackingField: 5
   <CurrentHealth>k__BackingField: 0
 --- !u!136 &4256639292960088738
