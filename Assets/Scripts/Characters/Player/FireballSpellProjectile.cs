@@ -1,77 +1,109 @@
 ﻿using DG.Tweening;
 using System;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 
 public class FireballSpellProjectile : SpellProjectile
 {
+    // #config
+    private Rigidbody _rigidbody;
+    private Collider _collider;
+
     private ICaster _caster;
+
+    private Vector3 _baseScale = Vector3.one / 2;
     private Vector3 _direction;
-    private float _speed = 10f; // Скорость полета фаербола
-    private float _damage = 1f; // Урон
-    private float _explosionRadius = 2f; // Радиус взрыва
-    private float _lifeTime = 2f; // Время жизни фаербола
-    private Vector3 _baseScale;
 
-    private Rigidbody _rigidbody; // Для физического движения
+    private float _damage = 1f; 
+    private float _spawnDuration = 0.3f; 
 
-    private void Start()
-    {
-        _baseScale = transform.localScale;
-        _rigidbody = GetComponent<Rigidbody>(); // Инициализация Rigidbody
-    }
+    private float _baseSpeed = 10f; 
+    private float _currentSpeed = 10f;
+
+    private float _explosionRadius = 2f; 
+    private float _noExplosionDelay = 0.05f;
+
+    private float _lifeTime = 2;
+    private float _currenLlifeTime = 2f;
+
+    private float _acceleration = 3f; 
+    private float _currentAcceleration = 2f;
+
+    public float StartAccelerationTime => _lifeTime - _noExplosionDelay - _spawnDuration;
 
     public override void Init(ICaster caster)
     {
+        ResetRigidbody();
+        DOTween.Kill(gameObject, true);
+
         _caster = caster;
         _direction = caster.Transform.forward;
-        transform.position = _caster.CastPoint.position;
-        transform.forward = _caster.CastPoint.forward;
 
-        gameObject.SetActive(true);
-        ResetRigidbody();
+        transform.forward = caster.Transform.forward;
+        transform.position = _caster.CastPoint.position;
         transform.localScale = _baseScale;
 
-        _lifeTime = 2f;
+        _currentSpeed = _baseSpeed;
+        _currentAcceleration = _acceleration;
+        _currenLlifeTime = _lifeTime;
 
         Creating();
-
-        // Запускаем корутину после активации
         StartCoroutine(LifeTimeCoroutine());
+
+        gameObject.SetActive(true);
+    }
+
+    private void Start()
+    {
+        _rigidbody = GetComponent<Rigidbody>();
+        _collider = GetComponent<Collider>();
+    }
+
+    private void FixedUpdate()
+    {
+        if (_currenLlifeTime > StartAccelerationTime || _currenLlifeTime <= 0)
+            return;
+
+        _currentSpeed += _currentAcceleration * Time.fixedDeltaTime;
+        _rigidbody.linearVelocity = _direction * _currentSpeed;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (_currenLlifeTime > _lifeTime - _noExplosionDelay || _currenLlifeTime <= 0)
+            return;
+
+        if (other.TryGetComponent(out ICaster caster) && caster != _caster) // #config  
+            return;
+
+        Explode();
     }
 
     private void Creating()
     {
-        float spawnDuration = 0.2f;
-        transform.localScale /= 2;
-
         transform.localScale = Vector3.zero;
-        transform.DOScale(Vector3.one, spawnDuration)
-              .SetEase(Ease.OutBack)
-              .OnComplete(() =>
-              {
-                  Fly();
-              });
+
+        transform.DOScale(_baseScale, _spawnDuration)
+            .SetEase(Ease.OutBack)
+            .OnComplete(Fly);
     }
 
-    // Запуск полета фаербола
-    public void Fly()
+
+    private void Fly()
     {
-        // Даем начальный импульс фаерболу через Rigidbody
-        _rigidbody.linearVelocity = _direction * _speed;
+        _collider.enabled = true;
+        _rigidbody.linearVelocity = _direction * _currentSpeed;
     }
 
-    // Coroutine для отслеживания времени жизни
-    private System.Collections.IEnumerator LifeTimeCoroutine()
+    private IEnumerator LifeTimeCoroutine()
     {
-        // Проводим проверку на активность объекта в цикле
-        while (_lifeTime > 0 && gameObject.activeSelf)
+        while (_currenLlifeTime > 0 && gameObject.activeSelf)
         {
-            _lifeTime -= Time.deltaTime;
+            _currenLlifeTime -= Time.deltaTime;
             yield return null;
         }
 
-        // Завершаем фаербол по истечении времени жизни
         if (gameObject.activeSelf)
         {
             DOTween.Kill(gameObject, true);
@@ -79,22 +111,9 @@ public class FireballSpellProjectile : SpellProjectile
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.TryGetComponent(out ICaster caster) && caster != _caster) // #config         
-            return;
-
-        Explode();
-    }
-
     private void Explode()
     {
-        // Радиус взрыва
-        Collider[] colliders = Physics.OverlapSphere(transform.position, _explosionRadius);
-        IHealth[] healthObjects = colliders
-            .Select(c => c.GetComponent<IHealth>())
-            .Where(health => health != null)
-            .ToArray();
+        IHealth[] healthObjects = GetClosesHealthActors();
 
         foreach (IHealth health in healthObjects)
         {
@@ -109,13 +128,27 @@ public class FireballSpellProjectile : SpellProjectile
         gameObject.SetActive(false);
     }
 
-    // Этот метод будет сбрасывать скорость Rigidbody при возврате в пул
-    public void ResetRigidbody()
+    private IHealth[] GetClosesHealthActors()
     {
-        if (_rigidbody != null)
-        {
-            _rigidbody.linearVelocity = Vector3.zero;
-            _rigidbody.angularVelocity = Vector3.zero; // Если требуется сбросить угловую скорость
-        }
+        Collider[] colliders = Physics.OverlapSphere(transform.position, _explosionRadius);
+        IHealth[] healthObjects = colliders
+            .Select(c => c.GetComponent<IHealth>())
+            .Where(health => health != null)
+            .ToArray();
+        return healthObjects;
+    }
+
+    private void ResetRigidbody()
+    {
+        _currentAcceleration = _acceleration;
+
+        if (_collider != null)
+            _collider.enabled = false;
+
+        if (_rigidbody == null)
+            return;
+
+        _rigidbody.linearVelocity = Vector3.zero;
+        _rigidbody.angularVelocity = Vector3.zero;
     }
 }
