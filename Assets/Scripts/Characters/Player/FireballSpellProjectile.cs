@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class FireballSpellProjectile : SpellProjectile
 {
+    [SerializeField] private GameObject _explosionVFX;
+
     // #config
     private Rigidbody _rigidbody;
     private Collider _collider;
@@ -123,6 +125,9 @@ public class FireballSpellProjectile : SpellProjectile
 
             health.ApplyDamage(_damage);
         }
+
+        GameObject explosion = Instantiate(_explosionVFX, transform.position - Vector3.down / 2, Quaternion.identity);
+        Destroy(explosion, 0.25f);
 
         DOTween.Kill(gameObject, true);
         gameObject.SetActive(false);

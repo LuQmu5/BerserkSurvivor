@@ -9586,6 +9586,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Type>k__BackingField: 0
+  _explosionVFX: {fileID: 4782988036657076227, guid: 881620dc3a3aa52498eb817479b42b9e, type: 3}
 --- !u!54 &-5099410771712707325
 Rigidbody:
   m_ObjectHideFlags: 0
