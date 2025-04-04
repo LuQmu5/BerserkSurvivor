@@ -9,8 +9,8 @@ public class Enemy : MonoBehaviour, IHealth
     [SerializeField] private NavMeshAgent _agent;
     [SerializeField] private BloodVFX _bloodVFX;
 
-    public float MaxHealth { get; private set; } = 100;
-    public float CurrentHealth { get; private set; }
+    [field: SerializeField] public float MaxHealth { get; private set; } = 100;
+    [field: SerializeField] public float CurrentHealth { get; private set; }
 
     private void Start()
     {
@@ -19,6 +19,12 @@ public class Enemy : MonoBehaviour, IHealth
 
     private void Update()
     {
+        if (_player == null)
+        {
+            _player = FindObjectOfType<CharacterBehaviour>().transform;
+            return;
+        }
+
         _agent.SetDestination(_player.position);
     }
 

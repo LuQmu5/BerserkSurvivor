@@ -54,7 +54,7 @@ public class SpellBook
         }
 
         CurrentActiveSpell = spell;
-        Debug.Log(spell.Data.Name + " is activated");
+        // Debug.Log(spell.Data.Name + " is activated");
 
         return true;
     }

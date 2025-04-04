@@ -1,5 +1,7 @@
 ﻿using DG.Tweening;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class FireballSpellProjectile : SpellProjectile
@@ -7,6 +9,8 @@ public class FireballSpellProjectile : SpellProjectile
     private ICaster _caster;
     private Vector3 _direction;
     private float _speed = 1;
+    private float _damage = 1; // #config
+    private float _explosionRadius = 2; // #config
     private Vector3 _baseScale;
 
     private void Start()
@@ -58,14 +62,32 @@ public class FireballSpellProjectile : SpellProjectile
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent(out ICaster caster))
-            if (caster != _caster)
-                Explode();
+        if (other.TryGetComponent(out ICaster caster) && caster != _caster) // #config         
+            return;
+
+        Explode();
     }
 
     private void Explode()
     {
-        Debug.Log("BABAH!");
-        gameObject.SetActive(false); 
+        Collider[] colliders = Physics.OverlapSphere(transform.position, _explosionRadius);
+        IHealth[] healthObjects = colliders
+            .Select(c => c.GetComponent<IHealth>())
+            .Where(health => health != null)
+            .ToArray();
+
+        foreach (IHealth health in healthObjects)
+        {
+            if (health is ICaster caster)
+                if (caster == _caster)
+                    continue; // # config # BUG
+
+            health.ApplyDamage(_damage);
+        }
+
+        Debug.Log($"Babah na {colliders.Length} units");
+
+        DOTween.Kill(gameObject);
+        Destroy(gameObject); // factory
     }
 }

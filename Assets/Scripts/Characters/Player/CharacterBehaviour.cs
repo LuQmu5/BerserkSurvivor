@@ -38,7 +38,8 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
         _combatSystem = new CharacterCombatSystem(this, stats, spellBookView, _view, transform, _castPoint);
         _mover = new CharacterMover(GetComponent<CharacterController>(), stats);
 
-        MaxHealth = 10;
+        _stats.TryGetCurrentValueOfStat(StatNames.MaxHealth, out float maxHealth);
+        MaxHealth = maxHealth;
         CurrentHealth = MaxHealth;
     }
 

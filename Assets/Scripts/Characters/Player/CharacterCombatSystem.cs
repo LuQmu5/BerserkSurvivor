@@ -32,11 +32,6 @@ public class CharacterCombatSystem
 
     public bool TryStartAttackPerform()
     {
-        Debug.LogWarning("Try start to perform attack");
-        Debug.LogWarning($"Attack on cooldown: {_attackCooldownRefreshingCoroutine != null}");
-        Debug.LogWarning($"No Active Spell Data Is Set: {ActiveSpellData == null}");
-        Debug.LogWarning($"Attack animation in progress: {_view.AttackAnimationInProgress}");
-
         if (_attackCooldownRefreshingCoroutine != null) // tyt trabla
             return false;
 
@@ -46,7 +41,6 @@ public class CharacterCombatSystem
         if (_view.TryStartAttackAnimation(ActiveSpellData.CastAnimationName) == false)
             return false;
 
-        Debug.LogWarning("Attack started");
         _view.CurrentAnimationPerformed += OnAnimationPerformed;
         _view.CurrentAnimationCanceled += OnAnimationCanceled;
 
@@ -55,16 +49,12 @@ public class CharacterCombatSystem
 
     private void OnAnimationCanceled()
     {
-        Debug.LogWarning("Attack Canceled!");
-
         _view.CurrentAnimationPerformed -= OnAnimationPerformed;
         _view.CurrentAnimationCanceled -= OnAnimationCanceled;
     }
 
     private void OnAnimationPerformed()
     {
-        Debug.LogWarning("Attack Performed!");
-
         _view.CurrentAnimationPerformed -= OnAnimationPerformed;
         _view.CurrentAnimationCanceled -= OnAnimationCanceled;
 

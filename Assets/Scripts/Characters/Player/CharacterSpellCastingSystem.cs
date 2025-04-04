@@ -116,13 +116,6 @@ public class CharacterSpellCastingSystem : ICaster
 
         if (_currentSpellIndex >= _currentCombo.Length)
             _currentSpellIndex = 0;
-
-
-        Debug.Log($"" +
-            $"1. {_currentCombo[0]}\n" +
-            $"2. {_currentCombo[1]}\n" +
-            $"3. {_currentCombo[2]}\n"
-            );
     }
 
     public void Cast()

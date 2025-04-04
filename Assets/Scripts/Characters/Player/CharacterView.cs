@@ -56,9 +56,6 @@ public class CharacterView : ICharacterView
         _animator.Play(name.ToString());
         AttackAnimationInProgress = true;
 
-        Debug.LogWarning("Attack in Progress: " + AttackAnimationInProgress);
-        Debug.LogWarning(name + " is playing");
-
         return true;
     }
 
@@ -82,8 +79,6 @@ public class CharacterView : ICharacterView
     /// </summary>
     public void CallEndOfAttackAnimation(bool isCanceled)
     {
-        Debug.Log("Canceled animation: " + isCanceled);
-
         AttackAnimationInProgress = false;
         _animator.SetTrigger(BreakAttackAnimationTrigger);
 
