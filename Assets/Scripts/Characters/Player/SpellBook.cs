@@ -1,17 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public enum SpellNames
-{
-    Fireball,
-    Frostbolt,
-    ArcaneMissile,
-    Heal,
-    TrailOfLife,
-    EarthQuake,
-    HasteBuff
-}
-
 public class SpellBook
 {
     private const string SpellsPath = "StaticData/Spells";

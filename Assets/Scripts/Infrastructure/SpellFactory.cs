@@ -1,4 +1,15 @@
-﻿public class SpellFactory
+﻿public enum SpellNames
+{
+    Fireball,
+    Frostbolt,
+    ArcaneMissile,
+    Heal,
+    TrailOfLife,
+    EarthQuake,
+    HasteBuff
+}
+
+public class SpellFactory
 {
     private readonly SpellsViewFactory _viewFactory;
     private readonly CharacterStats _stats;
@@ -20,6 +31,8 @@
             SpellNames.TrailOfLife => new TrailOfLifeSpell(data, _viewFactory, _stats),
             SpellNames.EarthQuake => new EarthQuake(data, _viewFactory, _stats),
             SpellNames.HasteBuff => new HasteBuff(data, _viewFactory, _stats),
+
+
             _ => throw new System.NotImplementedException($"No spell class registered for {data.Name}")
         };
     }
