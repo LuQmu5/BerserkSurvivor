@@ -1,9 +1,9 @@
 ﻿using System;
 using UnityEngine;
 
-public abstract class SpellProjectile : MonoBehaviour, ITypeable, IPoolable
+public abstract class SpellView : MonoBehaviour, ITypeable, IPoolable
 {
-    [field: SerializeField] public ProjectileType Type { get; private set; }
+    [field: SerializeField] public SpellViewType Type { get; private set; }
 
     public Enum ObjType => Type;
 

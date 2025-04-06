@@ -11,7 +11,7 @@ public class GameBootstrapper : MonoBehaviour
     private const string CharactersPath = "Prefabs/Characters";
 
     [Inject]
-    public void Construct(ProjectileFactory projectileFactory)
+    public void Construct(SpellsViewFactory projectileFactory)
     {
         int mageCharacterIndex = 0;
         

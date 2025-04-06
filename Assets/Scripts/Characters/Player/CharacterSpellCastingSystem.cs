@@ -31,7 +31,8 @@ public class CharacterSpellCastingSystem : ICaster
     public Transform Transform { get; }
     public Transform CastPoint { get; }
 
-    public CharacterSpellCastingSystem(ICoroutineRunner coroutineRunner, SpellBookView spellBookView, Transform transform, Transform castPoint, ProjectileFactory factory)
+    public CharacterSpellCastingSystem(ICoroutineRunner coroutineRunner, SpellBookView spellBookView, 
+        Transform transform, Transform castPoint, SpellsViewFactory factory, CharacterStats stats)
     {
         Transform = transform;
         CastPoint = castPoint;
@@ -51,7 +52,7 @@ public class CharacterSpellCastingSystem : ICaster
         coroutineRunner.StartCoroutine(Listening());
 
         _currentCombo = new MagicElements[MaxComboLength];
-        _spellBook = new SpellBook(factory);
+        _spellBook = new SpellBook(factory, stats);
         _spellBookView = spellBookView;
     }
 

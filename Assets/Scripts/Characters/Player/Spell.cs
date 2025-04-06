@@ -1,49 +1,67 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public abstract class Spell
 {
     public SpellData Data { get; private set; }
 
-    protected ProjectileFactory Factory;
+    protected CharacterStats CasterStats { get; }
 
-    public Spell(SpellData data, ProjectileFactory projectileFactory)
+    protected SpellsViewFactory SpellsViewVfactory;
+
+    public Spell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
     {
         Data = data;
-        Factory = projectileFactory;
+        SpellsViewVfactory = projectileFactory;
+        CasterStats = casterStats;
     }
 
     public abstract void Use(ICaster caster);
 }
 
-public class FireballSpell : Spell
+public class HasteBuff : Spell
 {
-    public FireballSpell(SpellData data, ProjectileFactory projectileFactory) : base(data, projectileFactory)
+    public HasteBuff(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
+        : base(data, projectileFactory, casterStats)
     {
     }
 
     public override void Use(ICaster caster)
     {
-        SpellProjectile fireball = Factory.GetItem(ProjectileType.Fireball);
+        Debug.Log(ToString() + ": speed buff");
+    }
+}
+
+public class FireballSpell : Spell
+{
+    public FireballSpell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
+        : base(data, projectileFactory, casterStats)
+    {
+    }
+
+    public override void Use(ICaster caster)
+    {
+        SpellView fireball = SpellsViewVfactory.GetItem(SpellViewType.Fireball);
         fireball.Init(caster);
     }
 }
 
 public class FrostboltSpell : Spell
 {
-    public FrostboltSpell(SpellData data, ProjectileFactory projectileFactory) : base(data, projectileFactory)
+    public FrostboltSpell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
+        : base(data, projectileFactory, casterStats)
     {
     }
 
     public override void Use(ICaster caster)
     {
-        Debug.Log(ToString() + "frost magic solo towards projectile with pierce");
+        Debug.Log(ToString() + " frost magic solo towards projectile with pierce");
     }
 }
 
 public class ArcaneMissileSpell : Spell
 {
-    public ArcaneMissileSpell(SpellData data, ProjectileFactory projectileFactory) : base(data, projectileFactory)
+    public ArcaneMissileSpell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
+        : base(data, projectileFactory, casterStats)
     {
     }
 
@@ -55,7 +73,8 @@ public class ArcaneMissileSpell : Spell
 
 public class HealSpell : Spell
 {
-    public HealSpell(SpellData data, ProjectileFactory projectileFactory) : base(data, projectileFactory)
+    public HealSpell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
+        : base(data, projectileFactory, casterStats)
     {
     }
 
@@ -67,7 +86,8 @@ public class HealSpell : Spell
 
 public class TrailOfLifeSpell : Spell
 {
-    public TrailOfLifeSpell(SpellData data, ProjectileFactory projectileFactory) : base(data, projectileFactory)
+    public TrailOfLifeSpell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
+        : base(data, projectileFactory, casterStats)
     {
     }
 
@@ -79,12 +99,13 @@ public class TrailOfLifeSpell : Spell
 
 public class EarthQuake : Spell
 {
-    public EarthQuake(SpellData data, ProjectileFactory projectileFactory) : base(data, projectileFactory)
+    public EarthQuake(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
+        : base(data, projectileFactory, casterStats)
     {
     }
 
     public override void Use(ICaster caster)
     {
-        Debug.Log(ToString() + " creates a earth quake in a point of caster");
+        Debug.Log(ToString() + " creates an earthquake at a point of caster");
     }
 }

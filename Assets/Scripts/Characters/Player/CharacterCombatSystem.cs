@@ -16,11 +16,11 @@ public class CharacterCombatSystem
     public SpellData ActiveSpellData => _spellCastingSystem.CurrentActiveSpell.Data;
     public bool AttackOnCooldown => _attackCooldownRefreshingCoroutine != null;
 
-    public CharacterCombatSystem(ICoroutineRunner coroutineRunner, CharacterStats characterStats, SpellBookView spellBookView, ICharacterView view, Transform transform, Transform castPoint, ProjectileFactory factory)
+    public CharacterCombatSystem(ICoroutineRunner coroutineRunner, CharacterStats characterStats, SpellBookView spellBookView, ICharacterView view, Transform transform, Transform castPoint, SpellsViewFactory factory)
     {
         _coroutineRunner = coroutineRunner;
         _characterStats = characterStats;
-        _spellCastingSystem = new CharacterSpellCastingSystem(coroutineRunner, spellBookView, transform, castPoint, factory);
+        _spellCastingSystem = new CharacterSpellCastingSystem(coroutineRunner, spellBookView, transform, castPoint, factory, characterStats);
         _spellBookView = spellBookView;
         _view = view;
     }

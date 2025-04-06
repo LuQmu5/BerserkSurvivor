@@ -6,7 +6,7 @@ public class FactoryInstaller : MonoInstaller
 {
     private const string ItemsPath = "Prefabs/Items";
     private const string EnemiesPath = "Prefabs/Enemies";
-    private const string ProjectilesPath = "Prefabs/Spells/Projectiles";
+    private const string SpellViewsPath = "Prefabs/Spells";
 
     public override void InstallBindings()
     {
@@ -17,9 +17,9 @@ public class FactoryInstaller : MonoInstaller
 
     private void InitSpellProjectilesFactory()
     {
-        SpellProjectile[] spellProjectiles = Resources.LoadAll<SpellProjectile>(ProjectilesPath);
+        SpellView[] spellProjectiles = Resources.LoadAll<SpellView>(SpellViewsPath);
 
-        ProjectileFactory projectileFactory = new ProjectileFactory(spellProjectiles);
+        SpellsViewFactory projectileFactory = new SpellsViewFactory(spellProjectiles);
         Container.BindInstance(projectileFactory).AsSingle().NonLazy();
     }
 

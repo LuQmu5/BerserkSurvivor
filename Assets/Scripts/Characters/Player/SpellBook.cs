@@ -10,7 +10,8 @@ public enum SpellNames
     ArcaneMissile,
     Heal,
     TrailOfLife,
-    EarthQuake
+    EarthQuake,
+    HasteBuff
 }
 
 public class SpellBook
@@ -21,7 +22,7 @@ public class SpellBook
 
     public Spell CurrentActiveSpell { get; private set; } = null;
 
-    public SpellBook(ProjectileFactory factory)
+    public SpellBook(SpellsViewFactory factory, CharacterStats stats)
     {
         SpellData[] spellsData = Resources.LoadAll<SpellData>(SpellsPath);
 
@@ -31,15 +32,17 @@ public class SpellBook
         SpellData healData = spellsData.First(i => i.Name == SpellNames.Heal);
         SpellData trailOfLifeData = spellsData.First(i => i.Name == SpellNames.TrailOfLife);
         SpellData earthQuakeData = spellsData.First(i => i.Name == SpellNames.EarthQuake);
+        SpellData hasteBuffData = spellsData.First(i => i.Name == SpellNames.HasteBuff);
 
         _spells = new List<Spell>()
         {
-            new FireballSpell(fireballData, factory),
-            new FrostboltSpell(frostboltData, factory),
-            new ArcaneMissileSpell(arcaneMissileData, factory),
-            new HealSpell(healData, factory),
-            new TrailOfLifeSpell(trailOfLifeData, factory),
-            new EarthQuake(earthQuakeData, factory),
+            new FireballSpell(fireballData, factory, stats),
+            new FrostboltSpell(frostboltData, factory, stats),
+            new ArcaneMissileSpell(arcaneMissileData, factory, stats),
+            new HealSpell(healData, factory, stats),
+            new TrailOfLifeSpell(trailOfLifeData, factory, stats),
+            new EarthQuake(earthQuakeData, factory,stats),
+            new HasteBuff(hasteBuffData, factory, stats)
         };
 
         CurrentActiveSpell = null;

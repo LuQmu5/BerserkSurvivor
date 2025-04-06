@@ -4,7 +4,7 @@ using System.Collections;
 using System.Linq;
 using UnityEngine;
 
-public class FireballSpellProjectile : SpellProjectile
+public class FireballSpellLogic : SpellView
 {
     [SerializeField] private GameObject _explosionVFX;
 
