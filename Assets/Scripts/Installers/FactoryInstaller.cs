@@ -12,14 +12,14 @@ public class FactoryInstaller : MonoInstaller
     {
         InitItemFactory();
         InitEnemiesFactory();
-        InitSpellProjectilesFactory();
+        InitSpellViewsFactory();
     }
 
-    private void InitSpellProjectilesFactory()
+    private void InitSpellViewsFactory()
     {
-        SpellView[] spellProjectiles = Resources.LoadAll<SpellView>(SpellViewsPath);
+        SpellView[] spellViews = Resources.LoadAll<SpellView>(SpellViewsPath);
 
-        SpellsViewFactory projectileFactory = new SpellsViewFactory(spellProjectiles);
+        SpellsViewFactory projectileFactory = new SpellsViewFactory(spellViews);
         Container.BindInstance(projectileFactory).AsSingle().NonLazy();
     }
 
