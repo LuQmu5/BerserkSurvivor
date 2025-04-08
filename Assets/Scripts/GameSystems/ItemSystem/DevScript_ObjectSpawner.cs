@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using Zenject;
-using static UnityEditor.Progress;
 
 public class DevScript_ObjectSpawner : MonoBehaviour
 {
@@ -24,12 +23,12 @@ public class DevScript_ObjectSpawner : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            SpawnItems(_itemFactory, Random.Range(5, 25));
+            SpawnItems(_itemFactory, Random.Range(10, 25));
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha2)) 
+        if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            SpawnItems(_enemyFactory, 1);
+            SpawnItems(_enemyFactory, 1);  // Спавн врагов
         }
     }
 
@@ -50,13 +49,15 @@ public class DevScript_ObjectSpawner : MonoBehaviour
 
     private void SpawnItems<T>(IFactory<T> factory, int itemsToSpawn)
     {
-        float spawnMinRadius = 5f; 
-        float spawnMaxRadius = 10f;
+        int spawnMinRadius = 5;
+        int spawnMaxRadius = 10;
+
+        System.Random rnd = new System.Random();
 
         for (int i = 0; i < itemsToSpawn; i++)
         {
-            float randomAngle = Random.Range(0f, 2f * Mathf.PI);
-            float randomRadius = Random.Range(spawnMinRadius, spawnMaxRadius);
+            float randomAngle = rnd.Next(0, 2) * Mathf.PI;
+            float randomRadius = rnd.Next(spawnMinRadius, spawnMaxRadius);
 
             Vector3 offset = new Vector3(Mathf.Cos(randomAngle) * randomRadius, 0, Mathf.Sin(randomAngle) * randomRadius);
             Vector3 spawnPosition = Vector3.zero + offset;
@@ -72,6 +73,25 @@ public class DevScript_ObjectSpawner : MonoBehaviour
                 EnemyBehaviour enemy = enemyFactory.GetItem(new System.Random().GetRandomEnumValue<EnemyType>());
                 enemy.Init(playerTransform, playerTransform.position + offset);
             }
+        }
+    }
+
+    // Новый метод для спавна врагов внутри сферы вокруг персонажа
+    private void SpawnEnemies(EnemyFactory enemyFactory, int enemiesToSpawn)
+    {
+        CharacterBehaviour player = FindObjectOfType<CharacterBehaviour>();
+        if (player == null) return;
+
+        float spawnRadius = 50f;  // Радиус сферы вокруг персонажа
+
+        for (int i = 0; i < enemiesToSpawn; i++)
+        {
+            // Случайная точка внутри сферы вокруг персонажа
+            Vector3 randomPosition = player.transform.position + Random.insideUnitSphere * spawnRadius;
+
+            // Генерация врага в случайной позиции
+            EnemyBehaviour enemy = enemyFactory.GetItem(new System.Random().GetRandomEnumValue<EnemyType>());
+            enemy.Init(player.transform, randomPosition);
         }
     }
 }

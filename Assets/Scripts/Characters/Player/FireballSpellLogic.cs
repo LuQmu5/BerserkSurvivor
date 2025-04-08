@@ -16,13 +16,13 @@ public class FireballSpellLogic : SpellView
     private Vector3 _direction;
 
     // # config
-    private float _damage = 1f;
+    private float _damage = 2f;
     private float _spawnDuration = 0.3f;
 
     private float _baseSpeed = 10f;
     private float _currentSpeed = 10f;
 
-    private float _explosionRadius = 2f;
+    private float _explosionRadius = 3f;
     private float _noExplosionDelay = 0.05f;
 
     private float _lifeTime = 2;
@@ -117,7 +117,7 @@ public class FireballSpellLogic : SpellView
         {
             float distanceToExplosion = Vector3.Distance(transform.position, health.Transform.position);
             float damageFactor = Mathf.Clamp01(1 - distanceToExplosion / _explosionRadius); // Расчет урона по дистанции
-            float bonusDamageFactor = 10;
+            float bonusDamageFactor = 20; // #config
             float finalDamage = _damage * (bonusDamageFactor + damageFactor); // Урон увеличивается в зависимости от того, насколько близко цель
 
             health.ApplyDamage(finalDamage);

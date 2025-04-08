@@ -63,22 +63,26 @@ public class EnemyBehaviour : MonoBehaviour, IHealth, ITypeable, IPoolable
 
     public void ApplyDamage(float amount)
     {
+        bool isCriticalHit = amount > MaxHealth / 2;
         CurrentHealth -= amount;
 
         if (CurrentHealth < 0)
             CurrentHealth = 0;
 
         if (CurrentHealth == 0)
-            Death();
+            Death(isCriticalHit);
     }
 
-    private void Death()
+    private void Death(bool isCriticalHit)
     {
         _player = null;
         _agent.isStopped = true;
         _animator.enabled = false;
 
-        _ragdoll.SetRagdollState(true, pushPower: 10); // #config
+        float criticalHitPushPower = 200;
+        float noCriticalHitPushPower = 10;
+
+        _ragdoll.SetRagdollState(true, pushPower: isCriticalHit? criticalHitPushPower : noCriticalHitPushPower); // #config
 
         StartCoroutine(DelayDeactivating());
     }
