@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 public class EnemyBehaviour : MonoBehaviour, IHealth, ITypeable, IPoolable
 {
@@ -33,7 +34,8 @@ public class EnemyBehaviour : MonoBehaviour, IHealth, ITypeable, IPoolable
         CurrentHealth = maxHealth;
 
         _agent = GetComponent<NavMeshAgent>();
-        _agent.speed = movementSpeed;
+        _agent.speed = Random.Range(movementSpeed / 1.5f, movementSpeed * 1.2f); // # config
+        _agent.angularSpeed = Random.Range(movementSpeed * 15, movementSpeed * 20); // # config
     }
 
     private void Update()
