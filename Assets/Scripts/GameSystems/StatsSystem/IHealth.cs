@@ -1,5 +1,9 @@
-﻿internal interface IHealth
+﻿using UnityEngine;
+
+internal interface IHealth
 {
+    public Transform Transform { get; }
+
     public float MaxHealth { get; }
     public float CurrentHealth { get; }
 

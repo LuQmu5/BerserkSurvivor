@@ -13,6 +13,8 @@ public class BerserkController : MonoBehaviour, IHealth
     public float MaxHealth { get; private set; } = 10;
     public float CurrentHealth { get; private set; }
 
+    public Transform Transform => transform;
+
     [Inject]
     public void Construct(PlayerInput input)
     {

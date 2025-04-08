@@ -27,6 +27,8 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
     public float CurrentExpirience { get; private set; } = 0;
     public float ExpirienceForNextLevel { get => CurrentLevel * 100; }
 
+    public Transform Transform => transform;
+
     public void Init(PlayerInput input, SpellBookView spellBookView, StatsData data, SpellsViewFactory factory)
     {
         _input = input;

@@ -7,29 +7,27 @@ using UnityEngine;
 public class FireballSpellLogic : SpellView
 {
     [SerializeField] private GameObject _explosionVFX;
-
-    // #config
-    private Rigidbody _rigidbody;
-    private Collider _collider;
+    [SerializeField] private Rigidbody _rigidbody;
+    [SerializeField] private Collider _collider;
 
     private ICaster _caster;
 
     private Vector3 _baseScale = Vector3.one / 2;
     private Vector3 _direction;
 
-    private float _damage = 1f; 
-    private float _spawnDuration = 0.3f; 
+    private float _damage = 1f;
+    private float _spawnDuration = 0.3f;
 
-    private float _baseSpeed = 10f; 
+    private float _baseSpeed = 10f;
     private float _currentSpeed = 10f;
 
-    private float _explosionRadius = 2f; 
+    private float _explosionRadius = 2f;
     private float _noExplosionDelay = 0.05f;
 
     private float _lifeTime = 2;
     private float _currenLlifeTime = 2f;
 
-    private float _acceleration = 3f; 
+    private float _acceleration = 3f;
     private float _currentAcceleration = 2f;
 
     public float StartAccelerationTime => _lifeTime - _noExplosionDelay - _spawnDuration;
@@ -56,12 +54,6 @@ public class FireballSpellLogic : SpellView
         gameObject.SetActive(true);
     }
 
-    private void Start()
-    {
-        _rigidbody = GetComponent<Rigidbody>();
-        _collider = GetComponent<Collider>();
-    }
-
     private void FixedUpdate()
     {
         if (_currenLlifeTime > StartAccelerationTime || _currenLlifeTime <= 0)
@@ -73,13 +65,15 @@ public class FireballSpellLogic : SpellView
 
     private void OnTriggerEnter(Collider other)
     {
-        if (_currenLlifeTime > _lifeTime - _noExplosionDelay || _currenLlifeTime <= 0)
-            return;
-
-        if (other.TryGetComponent(out ICaster caster) && caster != _caster) // #config  
+        if (IsProjectileReady() == false)
             return;
 
         Explode();
+    }
+
+    private bool IsProjectileReady()
+    {
+        return _currenLlifeTime < _lifeTime - _noExplosionDelay && _currenLlifeTime >= 0;
     }
 
     private void Creating()
@@ -90,7 +84,6 @@ public class FireballSpellLogic : SpellView
             .SetEase(Ease.OutBack)
             .OnComplete(Fly);
     }
-
 
     private void Fly()
     {
@@ -121,12 +114,18 @@ public class FireballSpellLogic : SpellView
 
         foreach (IHealth health in healthObjects)
         {
-            health.ApplyDamage(_damage);
+            float distanceToExplosion = Vector3.Distance(transform.position, health.Transform.position);
+            float damageFactor = Mathf.Clamp01(1 - distanceToExplosion / _explosionRadius); // Расчет урона по дистанции
+            float bonusDamageFactor = 10;
+            float finalDamage = _damage * (bonusDamageFactor + damageFactor); // Урон увеличивается в зависимости от того, насколько близко цель
+
+            health.ApplyDamage(finalDamage);
             Debug.Log(health.CurrentHealth);
         }
 
         GameObject explosion = Instantiate(_explosionVFX, transform.position - Vector3.down / 2, Quaternion.identity);
-        Destroy(explosion, 0.25f);
+        float explosionLifeTime = 0.25f;
+        Destroy(explosion, explosionLifeTime);
 
         DOTween.Kill(gameObject, true);
         gameObject.SetActive(false);

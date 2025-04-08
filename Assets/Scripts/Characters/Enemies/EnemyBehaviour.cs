@@ -16,6 +16,8 @@ public class EnemyBehaviour : MonoBehaviour, IHealth, ITypeable, IPoolable
 
     public Enum ObjType => Type;
 
+    public Transform Transform => transform;
+
     private Transform _player;
     private CharacterStats _stats;
 
