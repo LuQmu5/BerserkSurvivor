@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine;
 
 [Serializable]
@@ -22,12 +23,20 @@ public struct MagicElementsPattern
 
     public override bool Equals(object obj)
     {
-        return obj.ToString() == ToString();
+        if (obj is MagicElementsPattern other)
+        {
+            var thisElements = new[] { FirstSigil, SecondSigil, ThirdSigil }.OrderBy(x => x).ToArray();
+            var otherElements = new[] { other.FirstSigil, other.SecondSigil, other.ThirdSigil }.OrderBy(x => x).ToArray();
+
+            return thisElements.SequenceEqual(otherElements);
+        }
+        return false;
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(FirstSigil, SecondSigil, ThirdSigil);
+        var sortedElements = new[] { FirstSigil, SecondSigil, ThirdSigil }.OrderBy(x => x).ToArray();
+        return HashCode.Combine(sortedElements[0], sortedElements[1], sortedElements[2]);
     }
 
     public static bool operator ==(MagicElementsPattern c1, MagicElementsPattern c2)
