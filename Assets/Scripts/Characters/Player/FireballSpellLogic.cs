@@ -15,6 +15,7 @@ public class FireballSpellLogic : SpellView
     private Vector3 _baseScale = Vector3.one / 2;
     private Vector3 _direction;
 
+    // # config
     private float _damage = 1f;
     private float _spawnDuration = 0.3f;
 

@@ -5,8 +5,13 @@ public class ArcaneLaserOfDeathSpellLogic : SpellView
 {
     private Transform _startPoint;
     private Vector3 _endPoint;
+
+    // #config
+
     private float _laserDuration = 0.25f;
     private float _laserDistance = 10f;
+    private float _hitDamage = 5;
+    private float _afterDamage = 2;
 
     public override void Init(ICaster caster)
     {
@@ -43,7 +48,16 @@ public class ArcaneLaserOfDeathSpellLogic : SpellView
     {
         if (other.TryGetComponent(out IHealth healthActors))
         {
-            healthActors.ApplyDamage(1);
+            healthActors.ApplyDamage(_afterDamage);
+            print(healthActors.CurrentHealth);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.TryGetComponent(out IHealth healthActors))
+        {
+            healthActors.ApplyDamage(_hitDamage);
             print(healthActors.CurrentHealth);
         }
     }
