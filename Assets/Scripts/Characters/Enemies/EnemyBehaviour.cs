@@ -9,6 +9,8 @@ public class EnemyBehaviour : MonoBehaviour, IHealth, ITypeable, IPoolable
 {
     [SerializeField] private NavMeshAgent _agent;
     [SerializeField] private StatsData _statsData;
+    [SerializeField] private RagdollController _ragdoll;
+    [SerializeField] private Animator _animator;
 
     [field: SerializeField] public EnemyType Type { get; private set; }
     [field: SerializeField] public float MaxHealth { get; private set; }
@@ -38,6 +40,10 @@ public class EnemyBehaviour : MonoBehaviour, IHealth, ITypeable, IPoolable
         _agent = GetComponent<NavMeshAgent>();
         _agent.speed = Random.Range(movementSpeed / 1.5f, movementSpeed * 1.2f); // # config
         _agent.angularSpeed = Random.Range(movementSpeed * 15, movementSpeed * 20); // # config
+        _agent.isStopped = false;
+
+        _ragdoll.SetRagdollState(false);
+        _animator.enabled = true;
     }
 
     private void Update()
@@ -63,7 +69,25 @@ public class EnemyBehaviour : MonoBehaviour, IHealth, ITypeable, IPoolable
             CurrentHealth = 0;
 
         if (CurrentHealth == 0)
-            gameObject.SetActive(false);
+            Death();
+    }
+
+    private void Death()
+    {
+        _player = null;
+        _agent.isStopped = true;
+        _animator.enabled = false;
+
+        _ragdoll.SetRagdollState(true, pushPower: 10); // #config
+
+        StartCoroutine(DelayDeactivating());
+    }
+
+    private IEnumerator DelayDeactivating()
+    {
+        yield return new WaitForSeconds(1);
+
+        gameObject.SetActive(false);
     }
 
     public void Restore(float value)
