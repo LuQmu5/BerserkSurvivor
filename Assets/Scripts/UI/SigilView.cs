@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class SigilView : MonoBehaviour
@@ -23,6 +22,9 @@ public class SigilView : MonoBehaviour
     private const float BaseAlpha = 1;
     private const float NotActiveAlpha = 0.1f;
 
+    // Добавляем переменную для хранения текущего элемента
+    public MagicElements CurrentElement { get; private set; } = MagicElements.None;
+
     private void Start()
     {
         _canvasGroup = GetComponent<CanvasGroup>();
@@ -30,6 +32,16 @@ public class SigilView : MonoBehaviour
 
     public void SetIconFor(MagicElements element)
     {
+        // Если элемент не изменился, не обновляем
+        if (CurrentElement == element) return;
+
+        // Деактивируем границу текущего элемента, если он меняется
+        if (CurrentElement != MagicElements.None)
+        {
+            DeactivateBorder();
+        }
+
+        CurrentElement = element;
         SetAlpha(BaseAlpha);
 
         switch (element)
@@ -81,6 +93,8 @@ public class SigilView : MonoBehaviour
     {
         _image.sprite = NoSigil;
         SetAlpha(NotActiveAlpha);
+        // Деактивируем границу при сбросе
+        DeactivateBorder();
     }
 
     public void ActivateBorder()

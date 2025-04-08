@@ -4,34 +4,26 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public enum MagicElements
-{
-    None = 0,
-    Arcane = 1,
-    Death = 2,
-    Earth = 3,
-    Fire = 4,
-    Frost = 5,
-    Inferno = 6,
-    Life = 7,
-    Wind = 8
-}
-
 public class CharacterSpellCastingSystem : ICaster
 {
-    private const int MaxComboLength = 3;
-
-    private IReadOnlyDictionary<KeyCode, MagicElements> _spellKeys;
-    private MagicElements[] _currentCombo;
     private SpellBook _spellBook;
-    private SpellBookView _spellBookView;
-    private int _currentSpellIndex;
-
     public Spell CurrentActiveSpell => _spellBook.CurrentActiveSpell;
     public Transform Transform { get; }
     public Transform CastPoint { get; }
 
-    public CharacterSpellCastingSystem(ICoroutineRunner coroutineRunner, SpellBookView spellBookView, 
+    private const int MaxComboLength = 3;
+    private const float ComboTimeLimit = 1f; // 1 секунда на сбор комбинации
+    private const float ComboTimeUpdate = 0.33f; // 0.33 сек для обновления таймера
+
+    private IReadOnlyDictionary<KeyCode, MagicElements> _spellKeys;
+    private MagicElements[] _currentCombo;
+    private SpellBookView _spellBookView;
+    private int _currentSpellIndex;
+
+    private float _comboTimer; // Таймер для отслеживания времени на сбор комбинации
+
+
+    public CharacterSpellCastingSystem(ICoroutineRunner coroutineRunner, SpellBookView spellBookView,
         Transform transform, Transform castPoint, SpellsViewFactory factory, CharacterStats stats)
     {
         Transform = transform;
@@ -49,11 +41,16 @@ public class CharacterSpellCastingSystem : ICaster
             [KeyCode.L] = MagicElements.Wind,
         };
 
-        coroutineRunner.StartCoroutine(Listening());
-
         _currentCombo = new MagicElements[MaxComboLength];
         _spellBook = new SpellBook(factory, stats);
         _spellBookView = spellBookView;
+
+        _comboTimer = ComboTimeLimit; // Инициализация таймера
+    }
+
+    public void StartListening(ICoroutineRunner coroutineRunner)
+    {
+        coroutineRunner.StartCoroutine(Listening());
     }
 
     public bool TryActiveSpell()
@@ -87,7 +84,7 @@ public class CharacterSpellCastingSystem : ICaster
         while (true)
         {
             CheckComboKeys();
-
+            UpdateComboTimer();
             yield return null;
         }
     }
@@ -103,6 +100,9 @@ public class CharacterSpellCastingSystem : ICaster
 
     private void FillComboArray(MagicElements item)
     {
+        // Сбрасываем таймер, так как мы нажали клавишу
+        _comboTimer = ComboTimeLimit;
+
         for (int i = 0; i < _currentCombo.Length; i++)
         {
             if (_currentCombo[i] == default)
@@ -117,6 +117,27 @@ public class CharacterSpellCastingSystem : ICaster
 
         if (_currentSpellIndex >= _currentCombo.Length)
             _currentSpellIndex = 0;
+    }
+
+    private void UpdateComboTimer()
+    {
+        // Если таймер больше 0, уменьшать его
+        if (_comboTimer > 0)
+        {
+            _comboTimer -= Time.deltaTime;
+        }
+        else
+        {
+            // Если таймер истек, сбрасываем комбинацию
+            ResetCombo();
+        }
+    }
+
+    private void ResetCombo()
+    {
+        _currentCombo = new MagicElements[MaxComboLength];
+        _currentSpellIndex = 0;
+        _spellBookView.DeactivateSigils(); // Сбрасываем UI
     }
 
     public void Cast()

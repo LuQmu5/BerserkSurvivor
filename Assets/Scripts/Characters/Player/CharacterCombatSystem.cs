@@ -23,6 +23,8 @@ public class CharacterCombatSystem
         _spellCastingSystem = new CharacterSpellCastingSystem(coroutineRunner, spellBookView, transform, castPoint, factory, characterStats);
         _spellBookView = spellBookView;
         _view = view;
+
+       _spellCastingSystem.StartListening(coroutineRunner);
     }
 
     public bool TryActivateSpell()

@@ -20,16 +20,19 @@ public class SpellBookView : MonoBehaviour
 
     public void SetPattern(MagicElements element, int index)
     {
+        if (_sigilsView[index].CurrentElement == element) 
+            return;
+
         _sigilsView[index].SetIconFor(element);
 
-        _sigilsView[_currentActiveSigilViewIndex].DeactivateBorder();
-        _currentActiveSigilViewIndex++;
+        if (_currentActiveSigilViewIndex != index)
+        {
+            _sigilsView[_currentActiveSigilViewIndex].DeactivateBorder();
+            _sigilsView[index].ActivateBorder();
+            _currentActiveSigilViewIndex = index;
+        }
 
-        if (_currentActiveSigilViewIndex >= _sigilsView.Length)
-            _currentActiveSigilViewIndex = 0;
-
-        _sigilsView[_currentActiveSigilViewIndex].ActivateBorder();
-        _sigilsView[_currentActiveSigilViewIndex].SetActiveAlpha();
+        _sigilsView[index].SetActiveAlpha();
     }
 
     public void SetNewSpellIcon(SpellData spell)
@@ -40,13 +43,15 @@ public class SpellBookView : MonoBehaviour
         DeactivateSigils();
     }
 
-    private void DeactivateSigils()
+    public void DeactivateSigils()
     {
         foreach (SigilView sigilView in _sigilsView)
             sigilView.SetIconFor(MagicElements.None);
 
         _sigilsView[0].SetActiveAlpha();
         _sigilsView[0].ActivateBorder();
+
+        print("Deactivated");
     }
 
     public void UpdateCooldownFillAmount(float remainedCooldownPercent)
