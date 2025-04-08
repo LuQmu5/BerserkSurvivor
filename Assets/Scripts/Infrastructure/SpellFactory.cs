@@ -6,7 +6,8 @@
     Heal,
     TrailOfLife,
     EarthQuake,
-    HasteBuff
+    HasteBuff,
+    ArcaneLaserOfDeath
 }
 
 public class SpellFactory
@@ -31,7 +32,7 @@ public class SpellFactory
             SpellNames.TrailOfLife => new TrailOfLifeSpell(data, _viewFactory, _stats),
             SpellNames.EarthQuake => new EarthQuake(data, _viewFactory, _stats),
             SpellNames.HasteBuff => new HasteBuff(data, _viewFactory, _stats),
-
+            SpellNames.ArcaneLaserOfDeath => new ArcaneLaserOfDeathSpell(data, _viewFactory, _stats),
 
             _ => throw new System.NotImplementedException($"No spell class registered for {data.Name}")
         };

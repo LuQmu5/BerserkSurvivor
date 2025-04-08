@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb658202680b1f242ac49c16c7183404, type: 3}
-  m_Name: ArcaneMissile
+  m_Name: ArcaneLaserOfDeath
   m_EditorClassIdentifier: 
-  <Name>k__BackingField: 2
-  <Description>k__BackingField: Default bolt of frost ice
-  <Icon>k__BackingField: {fileID: 21300000, guid: cdec13907ffc75749ab2ed436bec6b14, type: 3}
+  <Name>k__BackingField: 7
+  <Description>k__BackingField: Death by purple laser!
+  <Icon>k__BackingField: {fileID: 21300000, guid: 4029a9cfeb86f134c9c5af05993eaac8, type: 3}
   <Pattern>k__BackingField:
     <FirstSigil>k__BackingField: 1
     <SecondSigil>k__BackingField: 1
-    <ThirdSigil>k__BackingField: 8
-  <CastAnimationName>k__BackingField: 3
+    <ThirdSigil>k__BackingField: 2
+  <CastAnimationName>k__BackingField: 4

@@ -50,8 +50,6 @@ public class SpellBookView : MonoBehaviour
 
         _sigilsView[0].SetActiveAlpha();
         _sigilsView[0].ActivateBorder();
-
-        print("Deactivated");
     }
 
     public void UpdateCooldownFillAmount(float remainedCooldownPercent)
