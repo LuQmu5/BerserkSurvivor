@@ -117,6 +117,8 @@ public class FireballSpellLogic : SpellView
     {
         IHealth[] healthObjects = GetClosesHealthActors();
 
+        Debug.Log("Actors: " + healthObjects.Length);
+
         foreach (IHealth health in healthObjects)
         {
             if (health is ICaster caster)

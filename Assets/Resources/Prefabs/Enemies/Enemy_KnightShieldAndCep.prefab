@@ -11686,7 +11686,7 @@ MonoBehaviour:
   _agent: {fileID: 2608360159917457941}
   _statsData: {fileID: 11400000, guid: 136ced0c7fe19a54f99c10ccaed3e1a9, type: 2}
   <Type>k__BackingField: 0
-  <MaxHealth>k__BackingField: 5
+  <MaxHealth>k__BackingField: 25
   <CurrentHealth>k__BackingField: 0
 --- !u!136 &4256639292960088738
 CapsuleCollider:
