@@ -1,7 +1,6 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+using System;
 using UnityEngine;
 
 public class CharacterSpellCastingSystem : ICaster
@@ -12,16 +11,16 @@ public class CharacterSpellCastingSystem : ICaster
     public Transform CastPoint { get; }
 
     private const int MaxComboLength = 3;
-    private const float ComboTimeLimit = 1f; // 1 секунда на сбор комбинации
-    private const float ComboTimeUpdate = 0.33f; // 0.33 сек для обновления таймера
+    private const float ComboTimeLimit = 1f;
+    private const float ComboTimeUpdate = 0.5f;
 
     private IReadOnlyDictionary<KeyCode, MagicElements> _spellKeys;
     private MagicElements[] _currentCombo;
     private SpellBookView _spellBookView;
     private int _currentSpellIndex;
 
-    private float _comboTimer; // Таймер для отслеживания времени на сбор комбинации
-
+    private float _comboTimer;
+    private bool _isComboReset;
 
     public CharacterSpellCastingSystem(ICoroutineRunner coroutineRunner, SpellBookView spellBookView,
         Transform transform, Transform castPoint, SpellsViewFactory factory, CharacterStats stats)
@@ -45,7 +44,8 @@ public class CharacterSpellCastingSystem : ICaster
         _spellBook = new SpellBook(factory, stats);
         _spellBookView = spellBookView;
 
-        _comboTimer = ComboTimeLimit; // Инициализация таймера
+        _comboTimer = ComboTimeLimit;
+        _isComboReset = false;
     }
 
     public void StartListening(ICoroutineRunner coroutineRunner)
@@ -91,18 +91,28 @@ public class CharacterSpellCastingSystem : ICaster
 
     private void CheckComboKeys()
     {
-        if (Input.anyKeyDown)
-            foreach (KeyCode key in Enum.GetValues(typeof(KeyCode)))
-                if (Input.GetKeyDown(key))
-                    if (_spellKeys.ContainsKey(key))
-                        FillComboArray(_spellKeys[key]);
+        foreach (var key in _spellKeys.Keys)
+        {
+            if (Input.GetKeyDown(key))
+            {
+                if (_comboTimer <= 0)
+                {
+                    _comboTimer = ComboTimeLimit; 
+                }
+                else
+                {
+                    _comboTimer = Mathf.Min(_comboTimer + ComboTimeUpdate, ComboTimeLimit); 
+                }
+
+                _isComboReset = false;
+                FillComboArray(_spellKeys[key]);
+                break;
+            }
+        }
     }
 
     private void FillComboArray(MagicElements item)
     {
-        // Сбрасываем таймер, так как мы нажали клавишу
-        _comboTimer = ComboTimeLimit;
-
         for (int i = 0; i < _currentCombo.Length; i++)
         {
             if (_currentCombo[i] == default)
@@ -121,14 +131,12 @@ public class CharacterSpellCastingSystem : ICaster
 
     private void UpdateComboTimer()
     {
-        // Если таймер больше 0, уменьшать его
         if (_comboTimer > 0)
         {
             _comboTimer -= Time.deltaTime;
         }
-        else
+        else if (!_isComboReset)
         {
-            // Если таймер истек, сбрасываем комбинацию
             ResetCombo();
         }
     }
@@ -137,7 +145,9 @@ public class CharacterSpellCastingSystem : ICaster
     {
         _currentCombo = new MagicElements[MaxComboLength];
         _currentSpellIndex = 0;
-        _spellBookView.DeactivateSigils(); // Сбрасываем UI
+        _spellBookView.DeactivateSigils();
+
+        _isComboReset = true;
     }
 
     public void Cast()
