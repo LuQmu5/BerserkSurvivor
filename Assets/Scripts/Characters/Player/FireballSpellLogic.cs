@@ -121,11 +121,8 @@ public class FireballSpellLogic : SpellView
 
         foreach (IHealth health in healthObjects)
         {
-            if (health is ICaster caster)
-                if (caster == _caster)
-                    continue; // # config # BUG
-
             health.ApplyDamage(_damage);
+            Debug.Log(health.CurrentHealth);
         }
 
         GameObject explosion = Instantiate(_explosionVFX, transform.position - Vector3.down / 2, Quaternion.identity);
