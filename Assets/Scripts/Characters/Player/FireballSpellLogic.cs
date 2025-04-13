@@ -19,7 +19,7 @@ public class FireballSpellLogic : SpellView
     private float _damage = 2f;
     private float _spawnDuration = 0.3f;
 
-    private float _baseSpeed = 10f;
+    private float _baseSpeed = 15f;
     private float _currentSpeed = 10f;
 
     private float _explosionRadius = 3f;

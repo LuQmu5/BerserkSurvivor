@@ -10,8 +10,8 @@ public class ArcaneLaserOfDeathSpellLogic : SpellView
 
     private float _laserDuration = 0.25f;
     private float _laserDistance = 10f;
-    private float _hitDamage = 5;
-    private float _afterDamage = 2;
+    private float _hitDamage = 10;
+    private float _afterDamage = 3;
 
     public override void Init(ICaster caster)
     {
