@@ -8,90 +8,82 @@ public abstract class Spell
 
     protected SpellsViewFactory SpellsViewVfactory;
 
-    public Spell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
+    private SpellViewType _spellViewType;
+
+    public Spell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats, SpellViewType spellViewType)
     {
         Data = data;
         SpellsViewVfactory = projectileFactory;
         CasterStats = casterStats;
+        _spellViewType = spellViewType;
     }
 
-    public abstract void Use(ICaster caster);
+    public virtual void Use(ICaster caster)
+    {
+        SpellView spellView = SpellsViewVfactory.GetItem(_spellViewType);
+        spellView.Init(caster);
+    }
+}
+
+public class FireballSpell : Spell
+{
+    public FireballSpell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats, SpellViewType spellViewType)
+        : base(data, projectileFactory, casterStats, spellViewType)
+    {
+    }
+}
+
+public class ArcaneLaserOfDeathSpell : Spell
+{
+    public ArcaneLaserOfDeathSpell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats, SpellViewType spellViewType)
+        : base(data, projectileFactory, casterStats, spellViewType)
+    {
+    }
+}
+
+public class FrostSpikeSpell : Spell
+{
+    public FrostSpikeSpell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats, SpellViewType spellViewType) : base(data, projectileFactory, casterStats, spellViewType)
+    {
+    }
 }
 
 public class HasteBuff : Spell
 {
-    public HasteBuff(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
-        : base(data, projectileFactory, casterStats)
+    public HasteBuff(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats, SpellViewType spellViewType)
+        : base(data, projectileFactory, casterStats, spellViewType)
     {
-    }
-
-    public override void Use(ICaster caster)
-    {
-        Debug.Log(ToString() + ": speed buff");
-    }
-}
-
-public class FrostboltSpell : Spell
-{
-    public FrostboltSpell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
-        : base(data, projectileFactory, casterStats)
-    {
-    }
-
-    public override void Use(ICaster caster)
-    {
-        Debug.Log(ToString() + " frost magic solo towards projectile with pierce");
     }
 }
 
 public class ArcaneMissileSpell : Spell
 {
-    public ArcaneMissileSpell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
-        : base(data, projectileFactory, casterStats)
+    public ArcaneMissileSpell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats, SpellViewType spellViewType)
+        : base(data, projectileFactory, casterStats, spellViewType)
     {
-    }
-
-    public override void Use(ICaster caster)
-    {
-        Debug.Log(ToString() + " arcane magic auto-projectiles!");
     }
 }
 
 public class HealSpell : Spell
 {
-    public HealSpell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
-        : base(data, projectileFactory, casterStats)
+    public HealSpell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats, SpellViewType spellViewType)
+        : base(data, projectileFactory, casterStats, spellViewType)
     {
-    }
-
-    public override void Use(ICaster caster)
-    {
-        Debug.Log(ToString() + " self heal with life magic!");
     }
 }
 
 public class TrailOfLifeSpell : Spell
 {
-    public TrailOfLifeSpell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
-        : base(data, projectileFactory, casterStats)
+    public TrailOfLifeSpell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats, SpellViewType spellViewType)
+        : base(data, projectileFactory, casterStats, spellViewType)
     {
-    }
-
-    public override void Use(ICaster caster)
-    {
-        Debug.Log(ToString() + " creates the trail of life magic behind the character");
     }
 }
 
 public class EarthQuake : Spell
 {
-    public EarthQuake(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
-        : base(data, projectileFactory, casterStats)
+    public EarthQuake(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats, SpellViewType spellViewType)
+        : base(data, projectileFactory, casterStats, spellViewType)
     {
-    }
-
-    public override void Use(ICaster caster)
-    {
-        Debug.Log(ToString() + " creates an earthquake at a point of caster");
     }
 }

@@ -9,8 +9,4 @@ public class SpellsViewFactory : MonoBehaviourFactory<SpellView>
     }
 }
 
-public enum SpellViewType
-{
-    Fireball,
-    ArcaneLaserOfDeath
-}
+
