@@ -1,11 +1,10 @@
 {
   "dependencies": {
     "com.marijnzwemmer.unity-toolbar-extender": {
-      "version": "https://github.com/marijnz/unity-toolbar-extender.git",
+      "version": "file:C:/Users/micha/Downloads/unity-toolbar-extender-master/unity-toolbar-extender-master",
       "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "dbd76ed996483d219c39d240f785b1790aa039ed"
+      "source": "local",
+      "dependencies": {}
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
