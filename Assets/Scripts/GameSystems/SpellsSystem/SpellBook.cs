@@ -8,7 +8,7 @@ public class SpellBook
     private List<Spell> _spells;
     public Spell CurrentActiveSpell { get; private set; } = null;
 
-    public SpellBook(SpellsViewFactory factory, CharacterStats stats)
+    public SpellBook(SpellsViewFactory factory, ICharacterStats stats)
     {
         SpellFactory spellFactory = new SpellFactory(factory, stats);
         SpellData[] spellsData = Resources.LoadAll<SpellData>(SpellsPath); // #config

@@ -1,7 +1,6 @@
-﻿using DG.Tweening.Plugins.Core;
+﻿
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public enum StatNames
@@ -13,7 +12,7 @@ public enum StatNames
     MaxHealth = 4
 }
 
-public class CharacterStats
+public class CharacterStats : ICharacterStats
 {
     private readonly Dictionary<StatNames, Stat> _baseStats = new();
     private readonly Dictionary<StatNames, List<StatModifier>> _modifiers = new();
@@ -56,7 +55,7 @@ public class CharacterStats
         _modifiers[statName].Add(modifier);
     }
 
-    private void CleanUpExpiredModifiers(List<StatModifier> modifiers)
+    public void CleanUpExpiredModifiers(List<StatModifier> modifiers)
     {
         modifiers.RemoveAll(mod => Time.time > mod.EndTime);
     }

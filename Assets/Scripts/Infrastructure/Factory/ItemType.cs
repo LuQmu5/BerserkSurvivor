@@ -1,5 +1,6 @@
 ﻿public enum ItemType
 {
     HealthPotion,
-    Expirience
+    Expirience,
+    SpeedBuff
 }

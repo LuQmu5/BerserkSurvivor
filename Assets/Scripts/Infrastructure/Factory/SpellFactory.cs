@@ -13,9 +13,9 @@
 public class SpellFactory
 {
     private readonly SpellsViewFactory _viewFactory;
-    private readonly CharacterStats _stats;
+    private readonly ICharacterStats _stats;
 
-    public SpellFactory(SpellsViewFactory viewFactory, CharacterStats stats)
+    public SpellFactory(SpellsViewFactory viewFactory, ICharacterStats stats)
     {
         _viewFactory = viewFactory;
         _stats = stats;

@@ -23,7 +23,7 @@ public class CharacterSpellCastingSystem : ICaster
     public Transform CastPoint { get; }
 
     public CharacterSpellCastingSystem(SpellCastView spellBookView,
-        Transform transform, Transform castPoint, SpellsViewFactory factory, CharacterStats stats)
+        Transform transform, Transform castPoint, SpellsViewFactory factory, ICharacterStats stats)
     {
         Transform = transform;
         CastPoint = castPoint;

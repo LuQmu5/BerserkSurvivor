@@ -1,11 +1,9 @@
-using DG.Tweening;
 using System.Collections;
-using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
-using Zenject;
 
 // надо делить еще на более мелкие системы и классы
-public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IItemPicker, ILevelable
+public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IItemPicker, ILevelable, ICharacterStats
 {
     private const string HorizintalAxis = "Horizontal";
     private const string VerticalAxis = "Vertical";
@@ -14,11 +12,12 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
     [SerializeField] private Transform _castPoint;
 
     private PlayerInput _input;
-    private CharacterStats _stats;
-
     private CharacterCombatSystem _combatSystem;
     private CharacterMover _mover;
     private CharacterView _view;
+
+    private readonly Dictionary<StatNames, Stat> _baseStats = new();
+    private readonly Dictionary<StatNames, List<StatModifier>> _modifiers = new();
 
     public float MaxHealth { get; private set; }
     public float CurrentHealth { get; private set; }
@@ -34,13 +33,16 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
         _input = input;
         _input.Enable();
 
-        _stats = new CharacterStats(data);
+        foreach (Stat stat in data.Stats)
+        {
+            _baseStats.Add(stat.Name, stat);
+        }
 
         _view = new CharacterView(GetComponent<Animator>());
-        _combatSystem = new CharacterCombatSystem(this, _stats, spellBookView, _view, transform, _castPoint, factory);
-        _mover = new CharacterMover(GetComponent<CharacterController>(), _stats);
+        _combatSystem = new CharacterCombatSystem(this, this, spellBookView, _view, transform, _castPoint, factory);
+        _mover = new CharacterMover(GetComponent<CharacterController>(), this);
 
-        _stats.TryGetCurrentValueOfStat(StatNames.MaxHealth, out float maxHealth);
+        TryGetCurrentValueOfStat(StatNames.MaxHealth, out float maxHealth);
         MaxHealth = maxHealth;
         CurrentHealth = MaxHealth;
     }
@@ -64,7 +66,7 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
         if (_input.Combat.ActivateSpell.triggered)
             _combatSystem.TryActivateSpell();
 
-        _stats.TryGetCurrentValueOfStat(StatNames.AttackSpeed, out float attackSpeed);
+        TryGetCurrentValueOfStat(StatNames.AttackSpeed, out float attackSpeed);
         _view.SetAttackSpeedMultiplier(attackSpeed);
     }
 
@@ -148,7 +150,6 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
         if (CurrentHealth > MaxHealth)
             CurrentHealth = MaxHealth;
 
-        // event
         Debug.Log("Healed");
     }
 
@@ -171,11 +172,45 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
     {
         Debug.Log("Current level: " + CurrentLevel);
     }
-}
 
-public interface ICoroutineRunner
-{
-    public Coroutine StartCoroutine(IEnumerator routineName);
-    public void StopCoroutine(Coroutine coroutine);
-}
+    public float GetCurrentStatValue(StatNames statName)
+    {
+        if (!_baseStats.TryGetValue(statName, out Stat baseStat))
+            return 0;
 
+        float baseValue = baseStat.Value;
+        float multiplier = 1f;
+
+        if (_modifiers.TryGetValue(statName, out var modList))
+        {
+            CleanUpExpiredModifiers(modList);
+
+            foreach (var mod in modList)
+            {
+                multiplier *= mod.Multiplier;
+            }
+        }
+
+        return baseValue * multiplier;
+    }
+
+    public void AddTemporaryMultiplier(StatNames statName, float multiplier, float duration)
+    {
+        if (!_modifiers.ContainsKey(statName))
+            _modifiers[statName] = new List<StatModifier>();
+
+        var modifier = new StatModifier(multiplier, Time.time + duration);
+        _modifiers[statName].Add(modifier);
+    }
+
+    public void CleanUpExpiredModifiers(List<StatModifier> modifiers)
+    {
+        modifiers.RemoveAll(mod => Time.time > mod.EndTime);
+    }
+
+    public bool TryGetCurrentValueOfStat(StatNames statName, out float result)
+    {
+        result = GetCurrentStatValue(statName);
+        return result > 0;
+    }
+}

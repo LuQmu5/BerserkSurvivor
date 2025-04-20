@@ -1,6 +1,6 @@
 ﻿public class FireballSpell : Spell
 {
-    public FireballSpell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
+    public FireballSpell(SpellData data, SpellsViewFactory projectileFactory, ICharacterStats casterStats)
         : base(data, projectileFactory, casterStats)
     {
     }

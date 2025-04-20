@@ -4,11 +4,11 @@ public abstract class Spell
 {
     public SpellData Data { get; private set; }
 
-    protected CharacterStats CasterStats { get; }
+    protected ICharacterStats CasterStats { get; }
 
     protected SpellsViewFactory SpellsViewVfactory;
 
-    public Spell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
+    public Spell(SpellData data, SpellsViewFactory projectileFactory, ICharacterStats casterStats)
     {
         Data = data;
         SpellsViewVfactory = projectileFactory;
@@ -20,7 +20,7 @@ public abstract class Spell
 
 public class HasteBuff : Spell
 {
-    public HasteBuff(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
+    public HasteBuff(SpellData data, SpellsViewFactory projectileFactory, ICharacterStats casterStats)
         : base(data, projectileFactory, casterStats)
     {
     }
@@ -33,7 +33,7 @@ public class HasteBuff : Spell
 
 public class FrostboltSpell : Spell
 {
-    public FrostboltSpell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
+    public FrostboltSpell(SpellData data, SpellsViewFactory projectileFactory, ICharacterStats casterStats)
         : base(data, projectileFactory, casterStats)
     {
     }
@@ -46,7 +46,7 @@ public class FrostboltSpell : Spell
 
 public class ArcaneMissileSpell : Spell
 {
-    public ArcaneMissileSpell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
+    public ArcaneMissileSpell(SpellData data, SpellsViewFactory projectileFactory, ICharacterStats casterStats)
         : base(data, projectileFactory, casterStats)
     {
     }
@@ -59,7 +59,7 @@ public class ArcaneMissileSpell : Spell
 
 public class HealSpell : Spell
 {
-    public HealSpell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
+    public HealSpell(SpellData data, SpellsViewFactory projectileFactory, ICharacterStats casterStats)
         : base(data, projectileFactory, casterStats)
     {
     }
@@ -72,7 +72,7 @@ public class HealSpell : Spell
 
 public class TrailOfLifeSpell : Spell
 {
-    public TrailOfLifeSpell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
+    public TrailOfLifeSpell(SpellData data, SpellsViewFactory projectileFactory, ICharacterStats casterStats)
         : base(data, projectileFactory, casterStats)
     {
     }
@@ -85,7 +85,7 @@ public class TrailOfLifeSpell : Spell
 
 public class EarthQuake : Spell
 {
-    public EarthQuake(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
+    public EarthQuake(SpellData data, SpellsViewFactory projectileFactory, ICharacterStats casterStats)
         : base(data, projectileFactory, casterStats)
     {
     }

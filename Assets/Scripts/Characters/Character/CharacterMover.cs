@@ -6,13 +6,13 @@ public class CharacterMover
 {
     private CharacterController _controller;
     private Transform _transform;
-    private CharacterStats _stats;
+    private ICharacterStats _stats;
     private bool _moveIsFreezed;
     private float _baseRotationSpeed = 10;
 
     public bool MoveIsFreezed => _moveIsFreezed;
 
-    public CharacterMover(CharacterController controller, CharacterStats stats)
+    public CharacterMover(CharacterController controller, ICharacterStats stats)
     {
         _controller = controller;
         _transform = controller.transform;

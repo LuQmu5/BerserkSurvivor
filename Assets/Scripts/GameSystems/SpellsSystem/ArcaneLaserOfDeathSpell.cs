@@ -2,14 +2,14 @@
 
 public class ArcaneLaserOfDeathSpell : Spell
 {
-    public ArcaneLaserOfDeathSpell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats)
+    public ArcaneLaserOfDeathSpell(SpellData data, SpellsViewFactory projectileFactory, ICharacterStats casterStats)
         : base(data, projectileFactory, casterStats)
     {
     }
 
     public override void Use(ICaster caster)
     {
-        SpellView fireball = SpellsViewVfactory.GetItem(SpellViewType.ArcaneLaserOfDeath);
-        fireball.Init(caster);
+        SpellView arcaneLaserOfDeath = SpellsViewVfactory.GetItem(SpellViewType.ArcaneLaserOfDeath);
+        arcaneLaserOfDeath.Init(caster);
     }
 }

@@ -5,6 +5,11 @@ using System.Text;
 
 public class DevScript_ObjectSpawner : MonoBehaviour
 {
+    [Header("Чит-коды (настраиваются в инспекторе)")]
+    [SerializeField] private string spawnItemsCheat = "items";
+    [SerializeField] private string spawnEnemiesCheat = "enemy";
+    [SerializeField] private string collectItemsCheat = "magnite";
+
     private EnemyFactory _enemyFactory;
     private ItemFactory _itemFactory;
 
@@ -22,7 +27,6 @@ public class DevScript_ObjectSpawner : MonoBehaviour
     private void Update()
     {
         HandleCheatInput();
-        CollectAllItemsCheck();
     }
 
     private void HandleCheatInput()
@@ -38,37 +42,40 @@ public class DevScript_ObjectSpawner : MonoBehaviour
 
         if (_inputBuffer.Length > 0 && Time.time - _lastInputTime > _inputResetTime)
         {
-            _inputBuffer.Clear(); // сбрасываем если слишком долго ничего не вводили
+            _inputBuffer.Clear();
         }
 
         string input = _inputBuffer.ToString();
 
-        if (input.EndsWith("enemy"))
+        if (input.EndsWith(spawnEnemiesCheat))
         {
             SpawnEnemies(_enemyFactory, 5);
-            Debug.Log("Чит-код активирован: ENEMY");
+            Debug.Log($"Чит-код активирован: {spawnEnemiesCheat.ToUpper()}");
             _inputBuffer.Clear();
         }
-        else if (input.EndsWith("items"))
+        else if (input.EndsWith(spawnItemsCheat))
         {
             SpawnItems(_itemFactory, Random.Range(10, 25));
-            Debug.Log("Чит-код активирован: ITEMS");
+            Debug.Log($"Чит-код активирован: {spawnItemsCheat.ToUpper()}");
+            _inputBuffer.Clear();
+        }
+        else if (input.EndsWith(collectItemsCheat))
+        {
+            CollectAllItems();
+            Debug.Log($"Чит-код активирован: {collectItemsCheat.ToUpper()}");
             _inputBuffer.Clear();
         }
     }
 
-    private static void CollectAllItemsCheck()
+    private void CollectAllItems()
     {
         CharacterBehaviour player = FindObjectOfType<CharacterBehaviour>();
+        if (player == null) return;
 
-        if (Input.GetKeyDown(KeyCode.P) && player != null)
+        Item[] items = FindObjectsOfType<Item>();
+        foreach (var item in items)
         {
-            Item[] items = FindObjectsOfType<Item>();
-
-            foreach (var item in items)
-            {
-                player.PickUp(item);
-            }
+            player.PickUp(item);
         }
     }
 
@@ -109,7 +116,7 @@ public class DevScript_ObjectSpawner : MonoBehaviour
         for (int i = 0; i < enemiesToSpawn; i++)
         {
             Vector3 randomPosition = player.transform.position + Random.insideUnitSphere * spawnRadius;
-            randomPosition.y = player.transform.position.y; // для ровного спавна по земле
+            randomPosition.y = player.transform.position.y;
 
             EnemyBehaviour enemy = enemyFactory.GetItem(new System.Random().GetRandomEnumValue<EnemyType>());
             enemy.Init(player.transform, randomPosition);
