@@ -5,15 +5,11 @@ using UnityEngine;
 
 public class CharacterSpellCastingSystem : ICaster
 {
-    private SpellBook _spellBook;
-    public Spell CurrentActiveSpell => _spellBook.CurrentActiveSpell;
-    public Transform Transform { get; }
-    public Transform CastPoint { get; }
-
     private const int MaxComboLength = 3;
     private const float ComboTimeLimit = 1f;
     private const float ComboTimeUpdate = 0.5f;
 
+    private SpellBook _spellBook;
     private IReadOnlyDictionary<KeyCode, MagicElements> _spellKeys;
     private MagicElements[] _currentCombo;
     private SpellCastView _spellBookView;
@@ -21,6 +17,10 @@ public class CharacterSpellCastingSystem : ICaster
 
     private float _comboTimer;
     private bool _isComboReset;
+
+    public Spell CurrentActiveSpell => _spellBook.CurrentActiveSpell;
+    public Transform Transform { get; }
+    public Transform CastPoint { get; }
 
     public CharacterSpellCastingSystem(SpellCastView spellBookView,
         Transform transform, Transform castPoint, SpellsViewFactory factory, CharacterStats stats)
@@ -85,6 +85,7 @@ public class CharacterSpellCastingSystem : ICaster
         {
             CheckComboKeys();
             UpdateComboTimer();
+
             yield return null;
         }
     }

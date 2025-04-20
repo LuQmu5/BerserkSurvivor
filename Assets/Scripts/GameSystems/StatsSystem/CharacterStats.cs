@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
 public enum StatNames
@@ -16,21 +15,55 @@ public enum StatNames
 
 public class CharacterStats
 {
-    private readonly Stat[] _stats;
+    private readonly Dictionary<StatNames, Stat> _baseStats = new();
+    private readonly Dictionary<StatNames, List<StatModifier>> _modifiers = new();
 
     public CharacterStats(StatsData data)
     {
-        _stats = data.Stats;
+        foreach (Stat stat in data.Stats)
+        {
+            _baseStats.Add(stat.Name, stat);
+        }
+    }
+
+    public float GetCurrentStatValue(StatNames statName)
+    {
+        if (!_baseStats.TryGetValue(statName, out Stat baseStat))
+            return 0;
+
+        float baseValue = baseStat.Value;
+        float multiplier = 1f;
+
+        if (_modifiers.TryGetValue(statName, out var modList))
+        {
+            CleanUpExpiredModifiers(modList);
+
+            foreach (var mod in modList)
+            {
+                multiplier *= mod.Multiplier;
+            }
+        }
+
+        return baseValue * multiplier;
+    }
+
+    public void AddTemporaryMultiplier(StatNames statName, float multiplier, float duration)
+    {
+        if (!_modifiers.ContainsKey(statName))
+            _modifiers[statName] = new List<StatModifier>();
+
+        var modifier = new StatModifier(multiplier, Time.time + duration);
+        _modifiers[statName].Add(modifier);
+    }
+
+    private void CleanUpExpiredModifiers(List<StatModifier> modifiers)
+    {
+        modifiers.RemoveAll(mod => Time.time > mod.EndTime);
     }
 
     public bool TryGetCurrentValueOfStat(StatNames statName, out float result)
     {
-        result = 0;
-        Stat item = _stats.FirstOrDefault(i => i.Name == statName);
-
-        if (item.Value > 0)
-            result = item.Value;
-
+        result = GetCurrentStatValue(statName);
         return result > 0;
     }
 }
@@ -55,5 +88,17 @@ public struct Stat
         Value = newValue;
 
         return true;
+    }
+}
+
+public struct StatModifier
+{
+    public float Multiplier;
+    public float EndTime;
+
+    public StatModifier(float multiplier, float endTime)
+    {
+        Multiplier = multiplier;
+        EndTime = endTime;
     }
 }

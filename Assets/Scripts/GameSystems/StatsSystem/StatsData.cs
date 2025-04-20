@@ -21,4 +21,4 @@ public class StatsData : ScriptableObject
     }
 }
 
-// attack speed = 10 too fast, 1 simple, x100 multiplier for UI
+
