@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class SpellBookView : MonoBehaviour
+public class SpellCastView : MonoBehaviour
 {
     [Header("Current Spell View")]
     [SerializeField] private Image _currentSpellIcon;
@@ -11,28 +10,17 @@ public class SpellBookView : MonoBehaviour
     [Header("Sigils View")]
     [SerializeField] private SigilView[] _sigilsView;
 
-    private int _currentActiveSigilViewIndex = 0;
-
     private void Start()
     {
         DeactivateSigils();
     }
 
-    public void SetPattern(MagicElements element, int index)
+    public void UpdageSigilView(MagicElements element, int index)
     {
-        if (_sigilsView[index].CurrentElement == element) 
-            return;
+        _sigilsView[index].UpdateIconWith(element);
 
-        _sigilsView[index].SetIconFor(element);
-
-        if (_currentActiveSigilViewIndex != index)
-        {
-            _sigilsView[_currentActiveSigilViewIndex].DeactivateBorder();
-            _sigilsView[index].ActivateBorder();
-            _currentActiveSigilViewIndex = index;
-        }
-
-        _sigilsView[index].SetActiveAlpha();
+        if (index != _sigilsView.Length - 1)
+            _sigilsView[index + 1].SetActive(true);
     }
 
     public void SetNewSpellIcon(SpellData spell)
@@ -46,10 +34,12 @@ public class SpellBookView : MonoBehaviour
     public void DeactivateSigils()
     {
         foreach (SigilView sigilView in _sigilsView)
-            sigilView.SetIconFor(MagicElements.None);
+        {
+            sigilView.UpdateIconWith(MagicElements.None);
+            sigilView.SetActive(false);
+        }
 
-        _sigilsView[0].SetActiveAlpha();
-        _sigilsView[0].ActivateBorder();
+        _sigilsView[0].SetActive(true);
     }
 
     public void UpdateCooldownFillAmount(float remainedCooldownPercent)

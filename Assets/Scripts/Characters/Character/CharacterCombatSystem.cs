@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Windows;
 
 public class CharacterCombatSystem
 {
@@ -8,7 +7,7 @@ public class CharacterCombatSystem
     private float _currentAttackCooldown;
     private CharacterStats _characterStats;
     private CharacterSpellCastingSystem _spellCastingSystem;
-    private SpellBookView _spellBookView;
+    private SpellCastView _spellBookView;
     private ICharacterView _view;
 
     private Coroutine _attackCooldownRefreshingCoroutine;
@@ -16,11 +15,11 @@ public class CharacterCombatSystem
     public SpellData ActiveSpellData => _spellCastingSystem.CurrentActiveSpell.Data;
     public bool AttackOnCooldown => _attackCooldownRefreshingCoroutine != null;
 
-    public CharacterCombatSystem(ICoroutineRunner coroutineRunner, CharacterStats characterStats, SpellBookView spellBookView, ICharacterView view, Transform transform, Transform castPoint, SpellsViewFactory factory)
+    public CharacterCombatSystem(ICoroutineRunner coroutineRunner, CharacterStats characterStats, SpellCastView spellBookView, ICharacterView view, Transform transform, Transform castPoint, SpellsViewFactory factory)
     {
         _coroutineRunner = coroutineRunner;
         _characterStats = characterStats;
-        _spellCastingSystem = new CharacterSpellCastingSystem(coroutineRunner, spellBookView, transform, castPoint, factory, characterStats);
+        _spellCastingSystem = new CharacterSpellCastingSystem(spellBookView, transform, castPoint, factory, characterStats);
         _spellBookView = spellBookView;
         _view = view;
 

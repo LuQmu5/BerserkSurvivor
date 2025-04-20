@@ -16,13 +16,13 @@ public class CharacterSpellCastingSystem : ICaster
 
     private IReadOnlyDictionary<KeyCode, MagicElements> _spellKeys;
     private MagicElements[] _currentCombo;
-    private SpellBookView _spellBookView;
-    private int _currentSpellIndex;
+    private SpellCastView _spellBookView;
+    private int _currentSigilIndex;
 
     private float _comboTimer;
     private bool _isComboReset;
 
-    public CharacterSpellCastingSystem(ICoroutineRunner coroutineRunner, SpellBookView spellBookView,
+    public CharacterSpellCastingSystem(SpellCastView spellBookView,
         Transform transform, Transform castPoint, SpellsViewFactory factory, CharacterStats stats)
     {
         Transform = transform;
@@ -30,14 +30,14 @@ public class CharacterSpellCastingSystem : ICaster
 
         _spellKeys = new Dictionary<KeyCode, MagicElements>()
         {
-            [KeyCode.Z] = MagicElements.Arcane,
-            [KeyCode.X] = MagicElements.Death,
-            [KeyCode.C] = MagicElements.Earth,
-            [KeyCode.V] = MagicElements.Fire,
-            [KeyCode.B] = MagicElements.Frost,
-            [KeyCode.N] = MagicElements.Inferno,
-            [KeyCode.M] = MagicElements.Life,
-            [KeyCode.L] = MagicElements.Wind,
+            [KeyCode.Alpha1] = MagicElements.Arcane,
+            [KeyCode.Alpha2] = MagicElements.Death,
+            [KeyCode.Alpha3] = MagicElements.Earth,
+            [KeyCode.Alpha4] = MagicElements.Fire,
+            [KeyCode.Alpha5] = MagicElements.Frost,
+            [KeyCode.Alpha6] = MagicElements.Inferno,
+            [KeyCode.Alpha7] = MagicElements.Life,
+            [KeyCode.Alpha8] = MagicElements.Wind,
         };
 
         _currentCombo = new MagicElements[MaxComboLength];
@@ -122,11 +122,11 @@ public class CharacterSpellCastingSystem : ICaster
             }
         }
 
-        _spellBookView.SetPattern(item, _currentSpellIndex);
-        _currentCombo[_currentSpellIndex++] = item;
+        _spellBookView.UpdageSigilView(item, _currentSigilIndex);
+        _currentCombo[_currentSigilIndex++] = item;
 
-        if (_currentSpellIndex >= _currentCombo.Length)
-            _currentSpellIndex = 0;
+        if (_currentSigilIndex >= _currentCombo.Length)
+            _currentSigilIndex = 0;
     }
 
     private void UpdateComboTimer()
@@ -144,7 +144,7 @@ public class CharacterSpellCastingSystem : ICaster
     private void ResetCombo()
     {
         _currentCombo = new MagicElements[MaxComboLength];
-        _currentSpellIndex = 0;
+        _currentSigilIndex = 0;
         _spellBookView.DeactivateSigils();
 
         _isComboReset = true;

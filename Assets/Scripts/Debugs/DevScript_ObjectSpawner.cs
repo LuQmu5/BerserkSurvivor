@@ -1,10 +1,16 @@
 ﻿using UnityEngine;
 using Zenject;
+using System.Collections.Generic;
+using System.Text;
 
 public class DevScript_ObjectSpawner : MonoBehaviour
 {
     private EnemyFactory _enemyFactory;
     private ItemFactory _itemFactory;
+
+    private StringBuilder _inputBuffer = new StringBuilder();
+    private float _inputResetTime = 2f;
+    private float _lastInputTime;
 
     [Inject]
     public void Construct(EnemyFactory enemyFactory, ItemFactory itemFactory)
@@ -15,20 +21,39 @@ public class DevScript_ObjectSpawner : MonoBehaviour
 
     private void Update()
     {
-        SpawnEntitiesCheck();
+        HandleCheatInput();
         CollectAllItemsCheck();
     }
 
-    private void SpawnEntitiesCheck()
+    private void HandleCheatInput()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        foreach (char c in Input.inputString)
         {
-            SpawnItems(_itemFactory, Random.Range(10, 25));
+            if (char.IsLetter(c))
+            {
+                _inputBuffer.Append(char.ToLower(c));
+                _lastInputTime = Time.time;
+            }
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha2))
+        if (_inputBuffer.Length > 0 && Time.time - _lastInputTime > _inputResetTime)
         {
-            SpawnItems(_enemyFactory, 1);  // Спавн врагов
+            _inputBuffer.Clear(); // сбрасываем если слишком долго ничего не вводили
+        }
+
+        string input = _inputBuffer.ToString();
+
+        if (input.EndsWith("enemy"))
+        {
+            SpawnEnemies(_enemyFactory, 5);
+            Debug.Log("Чит-код активирован: ENEMY");
+            _inputBuffer.Clear();
+        }
+        else if (input.EndsWith("items"))
+        {
+            SpawnItems(_itemFactory, Random.Range(10, 25));
+            Debug.Log("Чит-код активирован: ITEMS");
+            _inputBuffer.Clear();
         }
     }
 
@@ -51,45 +76,41 @@ public class DevScript_ObjectSpawner : MonoBehaviour
     {
         int spawnMinRadius = 5;
         int spawnMaxRadius = 10;
-
         System.Random rnd = new System.Random();
+        Transform playerTransform = FindObjectOfType<CharacterBehaviour>().transform;
 
         for (int i = 0; i < itemsToSpawn; i++)
         {
-            float randomAngle = rnd.Next(0, 2) * Mathf.PI;
+            float randomAngle = rnd.Next(0, 360) * Mathf.Deg2Rad;
             float randomRadius = rnd.Next(spawnMinRadius, spawnMaxRadius);
-
             Vector3 offset = new Vector3(Mathf.Cos(randomAngle) * randomRadius, 0, Mathf.Sin(randomAngle) * randomRadius);
-            Vector3 spawnPosition = Vector3.zero + offset;
-            Transform playerTransform = FindObjectOfType<CharacterBehaviour>().transform;
+            Vector3 spawnPosition = playerTransform.position + offset;
 
             if (factory is ItemFactory itemFactory)
             {
                 Item item = itemFactory.GetItem(new System.Random().GetRandomEnumValue<ItemType>());
-                item.Init(playerTransform.position + spawnPosition + Vector3.up * item.transform.localPosition.y);
+                item.Init(spawnPosition + Vector3.up * item.transform.localPosition.y);
             }
             else if (factory is EnemyFactory enemyFactory)
             {
                 EnemyBehaviour enemy = enemyFactory.GetItem(new System.Random().GetRandomEnumValue<EnemyType>());
-                enemy.Init(playerTransform, playerTransform.position + offset);
+                enemy.Init(playerTransform, spawnPosition);
             }
         }
     }
 
-    // Новый метод для спавна врагов внутри сферы вокруг персонажа
     private void SpawnEnemies(EnemyFactory enemyFactory, int enemiesToSpawn)
     {
         CharacterBehaviour player = FindObjectOfType<CharacterBehaviour>();
         if (player == null) return;
 
-        float spawnRadius = 50f;  // Радиус сферы вокруг персонажа
+        float spawnRadius = 50f;
 
         for (int i = 0; i < enemiesToSpawn; i++)
         {
-            // Случайная точка внутри сферы вокруг персонажа
             Vector3 randomPosition = player.transform.position + Random.insideUnitSphere * spawnRadius;
+            randomPosition.y = player.transform.position.y; // для ровного спавна по земле
 
-            // Генерация врага в случайной позиции
             EnemyBehaviour enemy = enemyFactory.GetItem(new System.Random().GetRandomEnumValue<EnemyType>());
             enemy.Init(player.transform, randomPosition);
         }

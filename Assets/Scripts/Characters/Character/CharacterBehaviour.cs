@@ -29,7 +29,7 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
 
     public Transform Transform => transform;
 
-    public void Init(PlayerInput input, SpellBookView spellBookView, StatsData data, SpellsViewFactory factory)
+    public void Init(PlayerInput input, SpellCastView spellBookView, StatsData data, SpellsViewFactory factory)
     {
         _input = input;
         _input.Enable();

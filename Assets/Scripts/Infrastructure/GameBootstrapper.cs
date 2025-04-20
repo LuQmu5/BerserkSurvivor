@@ -5,7 +5,7 @@ public class GameBootstrapper : MonoBehaviour
 {
     [SerializeField] private Transform _levelSpawnPoint;
     [SerializeField] private MainCameraController _mainCameraController;
-    [SerializeField] private SpellBookView _spellBookView;
+    [SerializeField] private SpellCastView _spellBookView;
     [SerializeField] private StatsData _characterStatsData;
 
     private const string CharactersPath = "Prefabs/Characters";
