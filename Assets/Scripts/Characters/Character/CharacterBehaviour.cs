@@ -110,6 +110,7 @@ public class CharacterBehaviour : MonoBehaviour, IHealth, ICoroutineRunner, IIte
 
     private Vector3 GetInputAxis() => new Vector2(SimpleInput.GetAxis(HorizintalAxis), SimpleInput.GetAxis(VerticalAxis));
 
+    // выделить отдельную сущность для подбора предметов 
     public void PickUp(Item item)
     {
         StartCoroutine(PickingUp(item));

@@ -1,8 +1,8 @@
 using DG.Tweening;
 using System;
 using UnityEngine;
-using Zenject.SpaceFighter;
 
+// список IEffect, хранимый в предмет
 public abstract class Item : MonoBehaviour, ITypeable, IPoolable
 {
     [Header("Item Settings")]
@@ -72,6 +72,7 @@ public abstract class Item : MonoBehaviour, ITypeable, IPoolable
          );
     }
 
+    // вынести, поменять местами с персонажем
     private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent(out IItemPicker itemPicker) && _collider.enabled)
