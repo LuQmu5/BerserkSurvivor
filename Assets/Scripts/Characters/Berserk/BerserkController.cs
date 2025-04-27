@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
 
@@ -27,6 +28,10 @@ public class BerserkController : MonoBehaviour, IHealth
     private void Update()
     {
         Vector3 inputVector = Camera.main.transform.TransformDirection(GetInputAxis());
+
+        if (_combat.ProcessingDash)
+            return;
+
         Move(inputVector); 
         
         if (_animator.AttackInProgress)
@@ -42,6 +47,16 @@ public class BerserkController : MonoBehaviour, IHealth
         {
             Attack();
         }
+
+        if (_input.Combat.Dash.triggered)
+        {
+            Dash();
+        }
+    }
+
+    private void Dash()
+    {
+        _combat.TryDash();
     }
 
     public void ApplyDamage(float amount)

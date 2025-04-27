@@ -3769,7 +3769,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!195 &318787789
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -3827,9 +3827,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96ac058038f886547b96e38676b49b47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _player: {fileID: 543450652073870474}
   _agent: {fileID: 318787789}
-  _bloodVFX: {fileID: 7012628438663580925, guid: 23ecd1d3cca7ed34fa5a4f0846d3b106, type: 3}
+  _statsData: {fileID: 0}
+  _ragdoll: {fileID: 0}
+  _animator: {fileID: 0}
+  <Type>k__BackingField: 0
+  <MaxHealth>k__BackingField: 0
+  <CurrentHealth>k__BackingField: 0
 --- !u!95 &318787792
 Animator:
   serializedVersion: 7
@@ -11863,6 +11867,7 @@ MonoBehaviour:
   _obstacleMask:
     serializedVersion: 2
     m_Bits: 64
+  _target: {fileID: 543450652073870474}
 --- !u!1 &965217017
 GameObject:
   m_ObjectHideFlags: 0
@@ -20083,7 +20088,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1548428951}
   m_Layer: 0
-  m_Name: MainBranch
+  m_Name: MichaelBranch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22343,7 +22348,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!195 &1724636426
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -22401,9 +22406,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96ac058038f886547b96e38676b49b47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _player: {fileID: 543450652073870474}
   _agent: {fileID: 1724636426}
-  _bloodVFX: {fileID: 7012628438663580925, guid: 23ecd1d3cca7ed34fa5a4f0846d3b106, type: 3}
+  _statsData: {fileID: 0}
+  _ragdoll: {fileID: 0}
+  _animator: {fileID: 0}
+  <Type>k__BackingField: 0
+  <MaxHealth>k__BackingField: 0
+  <CurrentHealth>k__BackingField: 0
 --- !u!95 &1724636429
 Animator:
   serializedVersion: 7
@@ -29934,6 +29943,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _sword: {fileID: 1038720157}
+  _controller: {fileID: 919132147600662067}
 --- !u!95 &919132147600662071
 Animator:
   serializedVersion: 7
@@ -31011,6 +31021,10 @@ PrefabInstance:
     - target: {fileID: 8889581962401645127, guid: 4d907d560f011f748870301469ba466b, type: 3}
       propertyPath: m_Name
       value: Enemy_KnightShieldAndCep
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889581962401645127, guid: 4d907d560f011f748870301469ba466b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9130876054884756095, guid: 4d907d560f011f748870301469ba466b, type: 3}
       propertyPath: _player

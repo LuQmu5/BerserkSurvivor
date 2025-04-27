@@ -10,14 +10,20 @@ public class MainCameraController : MonoBehaviour
     [SerializeField] private Vector3 _baseOffset = new Vector3(0, 15, -8);
     [SerializeField] private Vector3 _baseEuler = new Vector3(60, 0, 0);
     [SerializeField] private LayerMask _obstacleMask;
+    [SerializeField] private Transform _target;
 
     private List<MeshRenderer> _obstacles = new List<MeshRenderer>();
-    private Transform _target;
 
     public void Init(Transform target)
     {
         _target = target;
         StartCoroutine(Following(_target));
+    }
+
+    private void Start()
+    {
+        if (_target != null)
+            StartCoroutine(Following(_target));
     }
 
     private void FixedUpdate()
