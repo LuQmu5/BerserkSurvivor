@@ -33,6 +33,14 @@ public class FireballSpell : Spell
     }
 }
 
+public class DarkMatterBallSpell : Spell
+{
+    public DarkMatterBallSpell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats, SpellViewType spellViewType)
+        : base(data, projectileFactory, casterStats, spellViewType)
+    {
+    }
+}
+
 public class ArcaneLaserOfDeathSpell : Spell
 {
     public ArcaneLaserOfDeathSpell(SpellData data, SpellsViewFactory projectileFactory, CharacterStats casterStats, SpellViewType spellViewType)

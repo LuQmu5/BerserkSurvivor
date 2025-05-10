@@ -3,7 +3,8 @@
     None,
     Fireball,
     FrostSpike,
-    ArcaneLaserOfDeath
+    ArcaneLaserOfDeath,
+    DarkMatterBall
 }
 
 public enum SpellViewType
@@ -11,7 +12,8 @@ public enum SpellViewType
     None,
     Fireball,
     ArcaneLaserOfDeath,
-    FrostSpike
+    FrostSpike,
+    DarkMatterBall
 }
 
 public class SpellFactory
@@ -32,6 +34,7 @@ public class SpellFactory
             SpellNames.Fireball => new FireballSpell(data, _viewFactory, _stats, SpellViewType.Fireball),
             SpellNames.FrostSpike => new FrostSpikeSpell(data, _viewFactory, _stats, SpellViewType.FrostSpike),
             SpellNames.ArcaneLaserOfDeath => new ArcaneLaserOfDeathSpell(data, _viewFactory, _stats, SpellViewType.ArcaneLaserOfDeath),
+            SpellNames.DarkMatterBall => new FireballSpell(data, _viewFactory, _stats, SpellViewType.DarkMatterBall),
 
             _ => throw new System.NotImplementedException($"No spell class registered for {data.Name}")
         };
