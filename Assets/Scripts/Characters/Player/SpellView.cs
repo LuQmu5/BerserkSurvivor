@@ -9,7 +9,7 @@ public abstract class SpellView : MonoBehaviour, ITypeable, IPoolable
 
     public event Action<IPoolable> OnDisableEvent;
 
-    public abstract void Init(ICaster caster);
+    public abstract void Init(ICaster caster, CharacterStats stats);
 
 
     private void OnDisable()

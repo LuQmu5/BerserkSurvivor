@@ -13,7 +13,7 @@ public class ArcaneLaserOfDeathSpellLogic : SpellView
     private float _hitDamage = 10;
     private float _afterDamage = 3;
 
-    public override void Init(ICaster caster)
+    public override void Init(ICaster caster, CharacterStats stats)
     {
         _startPoint = caster.CastPoint;
 

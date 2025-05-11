@@ -21,7 +21,7 @@ public abstract class Spell
     public virtual void Use(ICaster caster)
     {
         SpellView spellView = SpellsViewVfactory.GetItem(_spellViewType);
-        spellView.Init(caster);
+        spellView.Init(caster, CasterStats);
     }
 }
 

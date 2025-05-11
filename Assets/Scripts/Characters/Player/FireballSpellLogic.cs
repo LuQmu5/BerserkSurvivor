@@ -33,7 +33,7 @@ public class FireballSpellLogic : SpellView
 
     public float StartAccelerationTime => _lifeTime - _noExplosionDelay - _spawnDuration;
 
-    public override void Init(ICaster caster)
+    public override void Init(ICaster caster, CharacterStats stats)
     {
         ResetRigidbody();
         DOTween.Kill(gameObject, true);

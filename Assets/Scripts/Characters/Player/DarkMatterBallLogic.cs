@@ -1,95 +1,52 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class DarkMatterBallLogic : MonoBehaviour
+public class DarkMatterBallLogic : SpellView
 {
-    private int enemiesHit = 0;
-    private int maxPenetration = 10;
+    private float _flyTime = 2;
+    private float _duration = 3;
 
-    private float speed = 20f;
-    private float castTime = 2f;
-    private float damage = 10f;
-    private float healPercentPerHit = 0.005f;
+    private float _speed = 2;
+    private ICaster _caster;
+    private CharacterStats _casterStats;
+    private Vector3 _direction;
 
-    private bool isCasting = true;
-
-    private GameObject impactEffect;
-    private Transform caster;
-
-   
-    
-
-    void Start()
+    public override void Init(ICaster caster, CharacterStats stats)
     {
-        StartCoroutine(CastAndLaunch());
+        gameObject.SetActive(true);
+
+        _caster = caster;
+        _casterStats = stats;
+
+        transform.position = caster.CastPoint.position;
+        _direction = caster.CastPoint.forward;
+
+        StartCoroutine(Launching());
     }
 
-    public void SetCaster(Transform player)
+    private IEnumerator Launching()
     {
-        caster = player;
-    }
+        float timer = _flyTime;
 
-    IEnumerator CastAndLaunch()
-    {
-        yield return new WaitForSeconds(castTime);
-        isCasting = false;
-    }
-
-    void Update()
-    {
-        if (!isCasting)
-            transform.Translate(Vector3.forward * speed * Time.deltaTime);
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (isCasting) return;
-
-        /*if (other.CompareTag("Enemy"))
+        while (timer > 0)
         {
-           
-            Enemy enemy = other.GetComponent<Enemy>();
-            if (enemy != null)
-            {
-                enemy.TakeDamage(damage);
-            }
-        */
-            
-         /*   if (caster != null)
-            {
-                PlayerHealth playerHealth = caster.GetComponent<PlayerHealth>();
-                if (playerHealth != null)
-                {
-                    playerHealth.HealByPercent(healPercentPerHit);
-                }
-            }
-            */
-            enemiesHit++;
-            if (enemiesHit >= maxPenetration)
-            {
-                if (impactEffect != null)
-                    Instantiate(impactEffect, transform.position, Quaternion.identity);
+            transform.Translate(_direction * _speed * Time.deltaTime);
+            timer -= Time.deltaTime;
 
-                Destroy(gameObject);
-            }
-    }
-    //Для хила игрока на 0.5% за хит
-    /*
-    public float maxHealth = 100f;
-    public float currentHealth;
+            yield return null;
+        }
 
-    void Awake()
-    {
-        currentHealth = maxHealth;
-    }
+        timer = _duration;
 
-    public void HealByPercent(float percent)
-    {
-        float healAmount = maxHealth * percent;
-        currentHealth = Mathf.Min(currentHealth + healAmount, maxHealth);
-        Debug.Log("Healed by " + healAmount + ", current HP: " + currentHealth);
+        while (timer > 0)
+        {
+            // logic
+
+            timer -= Time.deltaTime;
+
+            yield return null;
+        }
+
+        gameObject.SetActive(false);    
     }
-    */
 }
-
-

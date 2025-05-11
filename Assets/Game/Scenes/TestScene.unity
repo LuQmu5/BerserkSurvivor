@@ -464,6 +464,7 @@ MonoBehaviour:
   _obstacleMask:
     serializedVersion: 2
     m_Bits: 64
+  _target: {fileID: 0}
 --- !u!1 &414582097
 GameObject:
   m_ObjectHideFlags: 0
