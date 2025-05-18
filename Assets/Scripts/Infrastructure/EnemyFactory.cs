@@ -10,5 +10,6 @@ public class EnemyFactory : MonoBehaviourFactory<EnemyBehaviour>
 
 public enum EnemyType
 {
-    Knight
+    Knight,
+    Zombie
 }

@@ -2,8 +2,8 @@
 
 public class RagdollController : MonoBehaviour
 {
-    private Rigidbody[] _rigidbodies;
-    private Collider[] _colliders;
+    [SerializeField] private Rigidbody[] _rigidbodies;
+    [SerializeField] private Collider[] _colliders;
 
     void Start()
     {

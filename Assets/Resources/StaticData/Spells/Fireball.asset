@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb658202680b1f242ac49c16c7183404, type: 3}
   m_Name: Fireball
   m_EditorClassIdentifier: 
-  <Name>k__BackingField: 0
+  <Name>k__BackingField: 1
   <Description>k__BackingField: Default big ball of fire
   <Icon>k__BackingField: {fileID: 21300000, guid: 2d089513ae4adfc48a683c362ad9992c, type: 3}
   <Pattern>k__BackingField:

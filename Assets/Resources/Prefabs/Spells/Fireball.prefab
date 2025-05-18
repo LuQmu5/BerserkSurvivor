@@ -9585,7 +9585,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4c5f432befdbbb498dc3074da9aa27a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Type>k__BackingField: 0
+  <Type>k__BackingField: 1
   _explosionVFX: {fileID: 4782988036657076227, guid: 881620dc3a3aa52498eb817479b42b9e, type: 3}
   _rigidbody: {fileID: -5099410771712707325}
   _collider: {fileID: 7591570715859982668}
